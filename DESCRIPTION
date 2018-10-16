@@ -15,3 +15,5 @@ Imports: dplyr,
     magrittr,
     ncdf4,
     stringr
+URL: https://github.com/r4ecology/rcdo
+BugReports: https://github.com/r4ecology/rcdo/issues
