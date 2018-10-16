@@ -12,3 +12,5 @@ You can install the development version of rcdo using.
 # install.packages("devtools")
 devtools::install_github("hypertidy/tidync", dependencies = TRUE)
 ```
+
+You will need to have Climate Data Operators installed to run rcdo. https://code.mpimet.mpg.de/projects/cdo/files
