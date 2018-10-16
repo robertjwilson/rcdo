@@ -1,0 +1,17 @@
+Package: rcdo
+Title: Tools to manipulate netcdf data
+Version: 0.0.0.9000
+Authors@R:
+    person(given = "Robert",
+           family = "Wilson",
+           role = c("aut", "cre"),
+           email = "robertwilson190@gmail.com")
+Description: A package to manipulate netcdf files.
+License: CC0
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
+Imports: dplyr,
+    magrittr,
+    ncdf4,
+    stringr
