@@ -1,7 +1,7 @@
 
 
 
-#' @title get dates available in netcdf file
+#' @title nc_dates
 #'
 #' @description This function will tell you the dates in a netcdf file
 #' @param ff This is the file to check. Must be the full system path to the file.

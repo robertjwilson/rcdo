@@ -1,22 +1,5 @@
 
 
-# to do
-# I need an option for having a nested data frame
-# add months and years options
-
-
-
-#' @title read ncdf file to a data frame
-#'
-#' @description This function allows you to clip a netcdf file to a specific latlon box
-#' @param ff This is the file to move. This must be the full system path to the file.
-#' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
-#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
-#' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
-#' @export
-
-# need an option for cacheing results...
-
 nc_read_nested <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")

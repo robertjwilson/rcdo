@@ -1,6 +1,6 @@
 
 
-#' @title get the depths available in a netcdf file
+#' @title nc_depths
 #'
 #' @description This function will tell you the depths available in a netcdf file
 #' @param ff This is the file to check.

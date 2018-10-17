@@ -1,25 +1,15 @@
 
-
-# to do
-# I need an option for having a nested data frame
-
-
-
-#' @title get the grid size of a netcdf file
+#' @title nc_gridsize
 #'
 #' @description This function provides the number of cells in the horizontal netcdf grid
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @export
 
-# need an option for cacheing results...
-
 nc_gridsize <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
-
-
 
   ff <- ff
 
@@ -82,7 +72,6 @@ nc_gridsize <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) 
   # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
   # this should be a valid assumption
 
-
   if ("curvilinear" %nin% grid_type) {
     nc_grid <- eval(parse(text = stringr::str_c(
       "expand.grid(Longitude = nc_lon, Latitude = nc_lat",
@@ -105,7 +94,7 @@ nc_gridsize <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) 
     }
   }
 
-  return(nrow(nc_grid))
+  nrow(nc_grid)
 }
 
 

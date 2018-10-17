@@ -5,7 +5,7 @@
 
 
 
-#' @title read ncdf file to a data frame
+#' @title nc_read
 #'
 #' @description This function allows you to read a netcdf file to a data frame.
 #' @param ff This is the file to move. This must be the full system path to the file.

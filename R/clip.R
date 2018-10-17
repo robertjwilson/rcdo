@@ -4,7 +4,7 @@
 # code to work out if the date ranges are invalid
 
 
-#' @title clip ncdf file
+#' @title nc_clip
 #'
 #' @description This function allows you to clip a netcdf file to a specific latlon box
 #' @param ff This is the file to clip. This must be the full system path to the file.

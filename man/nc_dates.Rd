@@ -7,7 +7,7 @@
 nc_dates(ff)
 }
 \arguments{
-\item{ff}{This is the file to move. This must be the full system path to the file.}
+\item{ff}{This is the file to check. Must be the full system path to the file.}
 }
 \description{
 This function will tell you the dates in a netcdf file

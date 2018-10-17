@@ -1,7 +1,7 @@
 
 
 
-#' @title get variables available in netcdf file
+#' @title nc_variables
 #'
 #' @description This function will tell you the variables in a netcdf file
 #' @param ff This is the file to check. This must be the full system path to the file.
