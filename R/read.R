@@ -7,7 +7,7 @@
 
 #' @title read ncdf file to a data frame
 #'
-#' @description This function allows you to clip a netcdf file to a specific latlon box
+#' @description This function allows you to read a netcdf file to a data frame.
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.

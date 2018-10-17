@@ -2,13 +2,13 @@
 # to be added: year range options
 
 
-#' @title clip ncdf file
-#' @description This function allows you to clip a netcdf file to a specific latlon box
+#' @title remap a ncdf file
+#' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param lon_range longitude range. c(min_longituse, max_longitude).
 #' @param lat_range latitude range. c(min_latitude, max_latitude).
-#' #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
+#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
 #' @param months Months you want. c(month_1, month_2,...)
 #' @param years Months you want. c(year_1, year_2,...)
 #' @param coord_rds longitudinal and latitudinal range for the regridding. c(lon_res, lat_res).

@@ -4,7 +4,7 @@
 #' @title get dates available in netcdf file
 #'
 #' @description This function will tell you the dates in a netcdf file
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @param ff This is the file to check. Must be the full system path to the file.
 #' @export
 
 # need an option for cacheing results...
