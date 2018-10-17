@@ -1,18 +1,6 @@
----
-output: github_document
----
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
-# rcdo
+# rcdo - easy tools for manipulating netcdf data in R.
 
 The goal of rcdo is to provide an easy to use interface to the command line tool data operators.
 
@@ -21,29 +9,8 @@ The goal of rcdo is to provide an easy to use interface to the command line tool
 You can install the development version of rcdo using.
 
 ``` r
-install.packages("rcdo")
+# install.packages("devtools")
+devtools::install_github("r4ecology/rcdo", dependencies = TRUE)
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-```{r example}
-## basic example code
-```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!
+You will need to have Climate Data Operators installed to run rcdo. Visit https://code.mpimet.mpg.de/projects/cdo/files for download and installation instructions.
