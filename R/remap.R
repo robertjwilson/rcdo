@@ -200,7 +200,7 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
     }
 
     nc_grid <- nc_grid %>%
-      tidyr::drop_na() %>%
+      # tidyr::drop_na() %>%
       dplyr::as_tibble()
 
     ncdf4::nc_close(nc_raw)
