@@ -1,7 +1,9 @@
 
 
 # to do
-# I need an option for having a nested data frame
+# month and year selection options
+# a way to estimate the potential size of the data frame to ask the user of they still want to read it in
+
 
 #' @title nc_read
 #'
@@ -141,7 +143,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
   }
 
   nc_grid <- nc_grid %>%
-    tidyr::drop_na() %>%
+    # tidyr::drop_na() %>%
     dplyr::as_tibble()
 
   ncdf4::nc_close(nc_raw)
