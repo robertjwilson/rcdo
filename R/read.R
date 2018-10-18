@@ -3,12 +3,10 @@
 # to do
 # I need an option for having a nested data frame
 
-
-
 #' @title nc_read
 #'
-#' @description This is a quick and easy way read a netcdf file to a data frame. It will read all or a specified list of variables into a specified data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @description This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
+#' @param ff This is the file to read.
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
@@ -21,26 +19,21 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
     stop("error: file is not cdo compatible")
   }
 
-
   init_dir <- getwd()
   on.exit(setwd(init_dir))
   temp_dir <- tempdir()
   dir.exists(temp_dir)
 
-  setwd(temp_dir)
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
 
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  }
-  if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-  }
+  setwd(temp_dir)
+
+  if(file.exists("dummy.nc"))
+  	file.remove("dummy.nc")
 
   # copy the file to the temporary folder
-
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
 
   ff <- "raw.nc"
 
@@ -68,7 +61,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
     dplyr::mutate(variable = stringr::str_replace_all(variable, " ", "")) %>%
     tidyr::spread(ignore, variable)
 
-
   lon_name <- stringr::str_replace_all(grid_details$xname, " ", "")
   lat_name <- stringr::str_replace_all(grid_details$yname, " ", "")
 
@@ -85,7 +77,9 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
       stop("error check date range supplied")
     }
 
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"))
+    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    if(!file.exists("dummy.nc"))
+    	stop("error: please check date range supplied")
     file.rename("dummy.nc", ff)
   }
   depths <- depths[complete.cases(depths)]
@@ -102,7 +96,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
 
   # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
   # this should be a valid assumption
-
 
   if ("curvilinear" %nin% grid_type) {
     nc_grid <- eval(parse(text = stringr::str_c(
