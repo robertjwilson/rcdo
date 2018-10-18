@@ -7,7 +7,7 @@
 
 #' @title nc_read
 #'
-#' @description This function allows you to read a netcdf file to a data frame.
+#' @description This is a quick and easy way read a netcdf file to a data frame. It will read all or a specified list of variables into a specified data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
