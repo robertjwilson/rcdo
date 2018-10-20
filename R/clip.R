@@ -21,11 +21,7 @@
 
 # need an option for cacheing results...
 
-<<<<<<< HEAD
 nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
-=======
-nc_clip_1 <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
->>>>>>> da392b01497f9243afada40a37b263e0bfc82e26
 
 	# if(!cdo_compatible(ff))
 	# 	stop("error: file is not cdo compatible")
