@@ -21,10 +21,10 @@
 
 # need an option for cacheing results...
 
-nc_clip<- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
+nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
 
-	if(!cdo_compatible(ff))
-		stop("error: file is not cdo compatible")
+	# if(!cdo_compatible(ff))
+	# 	stop("error: file is not cdo compatible")
 
   # take note of the working directory, so that it can be reset to this on exit
 
@@ -57,18 +57,21 @@ nc_clip<- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
   # copy the file to the temporary
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
+#
+#   # Now, we need to select the variables we are interested in....
+#   if (!is.null(vars)) {
+#     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+#     file.rename("dummy.nc", "raw.nc")
+#   }
 
-  # ad the variables we need to add attributes for
+  # clip to the box
 
-  # Now, we need to select the variables we are interested in....
-  if (!is.null(vars)) {
-    system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-    file.rename("dummy.nc", "raw.nc")
-  }
+  # if(is.null(vars))
+  	system(stringr::str_c("cdo sellonlatbox,",stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
+  	# system(stringr::str_c("cdo -selname,", stringr::str_flatten(vars, ","), " -sellonlatbox,",stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
 
-
-  system(stringr::str_c("cdo sellonlatbox,",stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
   file.rename("dummy.nc", "raw_clipped.nc")
+
 
     depths <- system(stringr::str_c("cdo showlevel ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
@@ -187,5 +190,4 @@ nc_clip<- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
-
 
