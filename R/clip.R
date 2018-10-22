@@ -32,31 +32,34 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   on.exit(setwd(init_dir))
 
   # to be safe, if the working directory is the CAO one, switch it to the home directory at this point
-
-  setwd("~")
-
-  if (!file.exists(ff)) {
-    stop(stringr::str_glue("File {ff} either does not exist or does not have the full path"))
-  }
+#
+#   setwd("~")
+#
+#   if (!file.exists(ff)) {
+#     stop(stringr::str_glue("File {ff} either does not exist or does not have the full path"))
+#   }
 
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- tempdir()
   dir.exists(temp_dir)
 
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
+
   setwd(temp_dir)
+  if(getwd() == init_dir)
+  	stop("error: there was a problem changing the directory")
 
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  }
+  # if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
+  #   file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+  # }
   if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
   # copy the file to the temporary
 
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
