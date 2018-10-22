@@ -23,8 +23,8 @@
 
 nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
 
-	# if(!cdo_compatible(ff))
-	# 	stop("error: file is not cdo compatible")
+	 if(!cdo_compatible(ff))
+	 	stop("error: file is not cdo compatible")
 
   # take note of the working directory, so that it can be reset to this on exit
 
@@ -56,13 +56,13 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
   # copy the file to the temporary
 
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
-#
-#   # Now, we need to select the variables we are interested in....
-#   if (!is.null(vars)) {
-#     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-#     file.rename("dummy.nc", "raw.nc")
-#   }
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
+
+  # Now, we need to select the variables we are interested in....
+  if (!is.null(vars)) {
+    system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    file.rename("dummy.nc", "raw.nc")
+  }
 
   # clip to the box
 
@@ -137,57 +137,16 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
   if (is.null(out_file)) {
     print("converting to a data frame")
-    file_name <- "raw_clipped.nc"
-    depths <- system(stringr::str_c("cdo showlevel ", file_name), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]] %>%
-      as.numeric()
-
-    depths <- depths[complete.cases(depths)]
-
-    times <- system(stringr::str_c("cdo showtimestamp ", file_name), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]]
-    times <- times[nchar(times) > 0]
-
-    # now, pull in the longitudes and latitudes...
-    nc_raw <- ncdf4::nc_open(file_name)
-    nc_lon <- ncdf4::ncvar_get(nc_raw, "lon")
-    nc_lat <- ncdf4::ncvar_get(nc_raw, "lat")
-
-    # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
-
-
-    nc_grid <- eval(parse(text = stringr::str_c(
-      "expand.grid(Longitude = nc_lon, Latitude = nc_lat",
-      ifelse(length(depths) > 1, ",Depth = depths", ""),
-      ifelse(length(times) > 1, ",Time = times", ""),
-      ")"
-    )))
-
-    if(is.null(vars)){
-    	vars <- system(stringr::str_c("cdo showname ", file_name), intern = TRUE, ignore.stderr = TRUE)
-    	vars <- stringr::str_split(vars, " ") %>%
-    		.[[1]]
-    	vars <- vars[nchar(vars) > 0]
-
-    }
-
-    for (vv in vars) {
-      nc_var <- ncdf4::ncvar_get(nc_raw, vv)
-      nc_grid$var <- nc_var %>% as.numeric()
-      names(nc_grid)[ncol(nc_grid)] <- vv
-    }
-
-    nc_grid <- nc_grid %>%
-      tidyr::drop_na() %>%
-      dplyr::as_tibble()
-
-    ncdf4::nc_close(nc_raw)
+    nc_grid <- nc_read("raw_clipped.nc")
     return(nc_grid)
   }
 
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
+
+
+
+
+
 
