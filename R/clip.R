@@ -23,6 +23,13 @@
 
 nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
 
+
+	# check that vars is a chracter stringr
+
+	if(!is.null(vars))
+		if(!is.character(vars))
+			stop("error: vars is not a character string")
+
 	 if(!cdo_compatible(ff))
 	 	stop("error: file is not cdo compatible")
 
