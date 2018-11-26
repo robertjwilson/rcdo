@@ -122,7 +122,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   }
 
   if(!is.null(months)){
-  	file_months <- system(stringr::str_c("cdo showmon ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
+  	file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
   		stringr::str_split(" ") %>%
   		.[[1]] %>%
   		as.integer()
@@ -140,7 +140,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   }
 
   if(!is.null(years)){
-  	file_years <- system(stringr::str_c("cdo showyear ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
+  	file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
   		stringr::str_split(" ") %>%
   		.[[1]] %>%
   		as.integer()
