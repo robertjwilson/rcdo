@@ -25,8 +25,6 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 	if(!cdo_compatible(ff))
 		stop("error: file is not cdo compatible")
 
-
-
 	if(remapping %nin% c("bil", "dis", "nn"))
 		stop(stringr::str_glue("remapping method {remapping} is invalid"))
 
@@ -35,20 +33,16 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
   init_dir <- getwd()
   on.exit(setwd(init_dir))
 
-  # to be safe, if the working directory is the CAO one, switch it to the home directory at this point
-
-  setwd("~")
-
-  if (!file.exists(ff)) {
-    stop(stringr::str_glue("File {ff} either does not exist or does not have the full path"))
-  }
-
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- tempdir()
-  dir.exists(temp_dir)
 
+  # copy the file to the temporary
+
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
   setwd(temp_dir)
 
+  if(getwd() == init_dir)
+  	stop("error: there was a problem changing the directory")
   # we need to set up a grid so that cdo can do a remapping. Easy enough
 
   lon_res <- coord_res[1]
@@ -71,16 +65,10 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  }
   if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
-  # copy the file to the temporary
-
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
 
   # ad the variables we need to add attributes for
 
