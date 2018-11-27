@@ -43,6 +43,10 @@ nc_vertmean <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_ra
 
 	if(remapping %nin% c("bil", "dis", "nn"))
 		stop(stringr::str_glue("remapping method {remapping} is invalid"))
+		
+		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
+
 
   # take note of the working directory, so that it can be reset to this on exit
 

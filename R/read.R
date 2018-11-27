@@ -30,6 +30,10 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
+	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
+
+
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
@@ -184,9 +188,14 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 }
 
 #
-# source("~/Dropbox/rcdo/R/utils.R")
+#  source("~/Dropbox/rcdo/R/utils.R")
 #
-# nc_read("~/Downloads/dummy.nc", dim_check = 1000000)
+#  ff <- "~/Downloads/dummy.nc"
+#
+# 	test <- as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE))
+#
+# #
+#  nc_read("~/Downloads/dummy.nc", dim_check = 1000000)
 
 
 

@@ -24,6 +24,10 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
 	if(!cdo_compatible(ff))
 		stop("error: file is not cdo compatible")
+		
+		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
+
 
 	if(remapping %nin% c("bil", "dis", "nn"))
 		stop(stringr::str_glue("remapping method {remapping} is invalid"))

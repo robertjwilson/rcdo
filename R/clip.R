@@ -44,6 +44,10 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 	 if(!cdo_compatible(ff))
 	 	stop("error: file is not cdo compatible")
+	 	
+	 	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
+
 
   # take note of the working directory, so that it can be reset to this on exit
 
