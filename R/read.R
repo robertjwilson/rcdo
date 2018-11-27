@@ -3,6 +3,15 @@
 # to do
 # month and year selection options
 # a way to estimate the potential size of the data frame to ask the user of they still want to read it in
+# the above works right now for the lonlat case. Get it working for the curvilinear case
+
+
+# a smarter way to handle nas in the data frame, as some values might be na but others not
+# add drop_na option
+
+# need to modify the code so that it can run in parallel or multiple sessions, without the temporary folders clashing.
+
+# also, add a check for the number of horizontal grids. Shouldn't read the netcdf if there is more than 1 GB(ish)
 
 
 #' @title nc_read
@@ -12,11 +21,12 @@
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
+#' @param dim_check The number of data points in the final data frame that will ask to continue. Set to NULL if you don't want to check.
 #' @export
 
 # need an option for cacheing results...
 
-nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
+nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
@@ -32,8 +42,9 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
 
   setwd(temp_dir)
 
-  if(file.exists("dummy.nc"))
-  	file.remove("dummy.nc")
+  if (file.exists("dummy.nc")) {
+    file.remove("dummy.nc")
+  }
 
   # copy the file to the temporary folder
 
@@ -80,8 +91,9 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
     }
 
     system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-    if(!file.exists("dummy.nc"))
-    	stop("error: please check date range supplied")
+    if (!file.exists("dummy.nc")) {
+      stop("error: please check date range supplied")
+    }
     file.rename("dummy.nc", ff)
   }
   depths <- depths[complete.cases(depths)]
@@ -100,6 +112,17 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
   # this should be a valid assumption
 
   if ("curvilinear" %nin% grid_type) {
+
+    # we need to estimate the data frame size for the curvilinear grid case
+
+    if (dim_check < length(nc_lon) * length(nc_lat) * length(depths) * length(times) * (2 + (length(depths) > 1) + (length(times) > 1))) {
+      choice <- readline(prompt = "This file is potentially large. Do you want to continue? (y/n): ")
+      print(choice)
+      if (choice != "y") {
+        (return("file is too big to read in"))
+      }
+    }
+
     nc_grid <- eval(parse(text = stringr::str_c(
       "expand.grid(Longitude = nc_lon, Latitude = nc_lat",
       ifelse(length(depths) > 1, ",Depth = depths", ""),
@@ -107,6 +130,16 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
       ")"
     )))
   } else {
+
+  	# right now, this is relatively simplistic. Only uses row numbers. Could be smarter....
+    if (dim_check < length(nc_lon)){
+      choice <- readline(prompt = "This file is potentially large. Do you want to continue? (y/n): ")
+      print(choice)
+      if (choice != "y") {
+        (return("file is too big to read in"))
+      }
+    }
+
     if (length(depths) < 2 & length(times) < 2) {
       nc_grid <- dplyr::data_frame(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
     } else {
@@ -149,3 +182,12 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
   ncdf4::nc_close(nc_raw)
   return(nc_grid)
 }
+
+#
+# source("~/Dropbox/rcdo/R/utils.R")
+#
+# nc_read("~/Downloads/dummy.nc", dim_check = 1000000)
+
+
+
+
