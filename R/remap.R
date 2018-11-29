@@ -115,7 +115,7 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
 
   if(!is.null(months)){
-  	file_months <- system(stringr::str_c("cdo showmon ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
+  	file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
   		stringr::str_split(" ") %>%
   		.[[1]] %>%
   		as.integer()
@@ -133,7 +133,7 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
   }
 
   if(!is.null(years)){
-  	file_years <- system(stringr::str_c("cdo showyear ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
+  	file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
   		stringr::str_split(" ") %>%
   		.[[1]] %>%
   		as.integer()
