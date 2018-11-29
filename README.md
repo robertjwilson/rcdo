@@ -1,5 +1,3 @@
-
-
 # rcdo - easy tools for manipulating netcdf data in R.
 
 The goal of rcdo is to provide an easy to use interface to the command line tool data operators.
