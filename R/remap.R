@@ -22,7 +22,7 @@
 
 nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
 
-	if(!is.numeric(coords_res))
+	if(!is.numeric(coord_res))
 		stop("error: check coord_res format")
 
 	if(length(coord_res) != 2)
