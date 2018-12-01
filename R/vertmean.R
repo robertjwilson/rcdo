@@ -43,7 +43,7 @@ nc_vertmean <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_ra
 
 	if(remapping %nin% c("bil", "dis", "nn"))
 		stop(stringr::str_glue("remapping method {remapping} is invalid"))
-		
+
 		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
 		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
 
@@ -228,7 +228,10 @@ nc_vertmean <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_ra
     ncdf4::nc_close(nc_raw)
     return(nc_grid)
   }
+  # save the file, if that's what you chose to do
+  # change the working directory back to the original
 
+  setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
 
