@@ -1,6 +1,8 @@
 
 # to be added: year range options
 
+# think about whether multiple grids should throw a warning or error
+
 
 #' @title remap a ncdf file
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
@@ -207,6 +209,11 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
     return(nc_grid)
   }
 
+
+  # save the file, if that's what you chose to do
+  # change the working directory back to the original
+
+  setwd(init_dir)
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
