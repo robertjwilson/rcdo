@@ -44,7 +44,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 	 if(!cdo_compatible(ff))
 	 	stop("error: file is not cdo compatible")
-	 	
+
 	 	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
 		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
 
@@ -166,7 +166,10 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
     nc_grid <- nc_read("raw_clipped.nc")
     return(nc_grid)
   }
+    # save the file, if that's what you chose to do
+    # change the working directory back to the original
 
+    setwd(init_dir)
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
