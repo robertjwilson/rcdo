@@ -52,3 +52,25 @@ if (nrow(grid_details) == 0)
 
 }
 
+
+
+file_valid <- function(ff){
+
+	if(!is.character(ff))
+		return(FALSE)
+
+	if(length(ff) > 1)
+		return(FALSE)
+
+	if(!file.exists(ff))
+		return(FALSE)
+
+	return(TRUE)
+
+
+
+
+}
+
+
+

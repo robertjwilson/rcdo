@@ -23,7 +23,8 @@
 
 nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
 
-	if(!file.exists(ff))
+
+	if(!file_valid(ff))
 		stop(stringr::str_glue("error: {ff} does not exist"))
 
 	# check if vert_range is valid
