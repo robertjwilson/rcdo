@@ -24,6 +24,12 @@
 
 nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
 
+
+	if(!file.exists(ff))
+		stop(stringr::str_glue("error: {ff} does not exist"))
+
+
+
 	if(!is.numeric(coord_res))
 		stop("error: check coord_res format")
 
