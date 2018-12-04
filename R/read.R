@@ -27,6 +27,12 @@
 # need an option for cacheing results...
 
 nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
+
+
+	if(!file.exists(ff))
+		stop(stringr::str_glue("error: {ff} does not exist"))
+
+
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
