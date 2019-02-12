@@ -124,6 +124,10 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 
   if(!is.null(vert_range)){
+
+  	if(length(depths) == 0)
+  		stop("error: no depths within the depth range selected")
+
   	system(stringr::str_c("cdo sellevel,", stringr::str_flatten(depths, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
     file.rename("dummy.nc", "raw_clipped.nc")
   }
@@ -185,10 +189,12 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
 
+# ff <- "~/Dropbox/rcdo/inst/extdata/woa18_decav_t01_01.nc"
 
+# library(rcdo)
 # source("~/Dropbox/rcdo/R/utils.R")
 #
-# nc_clip(ff, vert_range = c(5,5))
+# nc_clip(ff, vert_range = c(2,2))
 
 
 
