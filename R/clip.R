@@ -25,7 +25,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 
 	if(!file_valid(ff))
-		stop(stringr::str_glue("error: {ff} does not exist"))
+		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
 
 	# check if vert_range is valid
 
@@ -167,6 +167,14 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   if (is.null(out_file)) {
     print("converting to a data frame")
     nc_grid <- nc_read("raw_clipped.nc")
+
+    # if there is only one depth layer, depth will not be in the data frame. It needs to be added back in
+    if(length(depths) == 1)
+    	nc_grid <- nc_grid %>%
+    	dplyr::mutate(Depth = depths[1])
+
+
+
     return(nc_grid)
   }
     # save the file, if that's what you chose to do
@@ -178,7 +186,9 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 }
 
 
-
+# source("~/Dropbox/rcdo/R/utils.R")
+#
+# nc_clip(ff, vert_range = c(5,5))
 
 
 
