@@ -58,7 +58,7 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
 
   # make sure all of the relevant inputs have been supplied for horizontal gridding
 
-  if ((!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)) > 1) {
+  if ((!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)) >= 1) {
     if ((!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)) < 3) {
       stop("error: check lon_range, lat_range and coord_res are all supplied")
     }
