@@ -1,5 +1,7 @@
 
-# to be added: generalize this to cover min, max etc.
+# to be added: generalize this to cover vertical min, max etc.
+
+# the function should perhaps be modified so that it takes ..., and then sends ... to remap
 
 
 #' @title nc_vertmean
@@ -193,11 +195,12 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
-  # at this stage, we need to output a data frame if asked
+  # calculate the vertical mean
 
   system(stringr::str_c("cdo vertmean raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
 
+  # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
     print("converting to a data frame")
