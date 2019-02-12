@@ -57,12 +57,10 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
   }
 
   # make sure all of the relevant inputs have been supplied for horizontal gridding
-
-  if ((!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)) > 1) {
-    if ((!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)) < 3) {
+  grid_check <- (as.integer(!is.null(lon_range)) +  as.integer(!is.null(lat_range)) + as.integer(!is.null(coord_res)))
+	# print(as.integer(!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)))
+  if (grid_check >= 1 & grid_check < 3)
       stop("error: check lon_range, lat_range and coord_res are all supplied")
-    }
-  }
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
@@ -212,3 +210,6 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
+
+
+
