@@ -203,54 +203,7 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
   # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
-    file_name <- "raw_clipped.nc"
-    depths <- system(stringr::str_c("cdo showlevel ", file_name), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]] %>%
-      as.numeric()
-
-    depths <- depths[complete.cases(depths)]
-
-    times <- system(stringr::str_c("cdo showtimestamp ", file_name), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]]
-    times <- times[nchar(times) > 0]
-
-    # now, pull in the longitudes and latitudes...
-    nc_raw <- ncdf4::nc_open(file_name)
-    nc_lon <- ncdf4::ncvar_get(nc_raw, "lon")
-    nc_lat <- ncdf4::ncvar_get(nc_raw, "lat")
-
-    # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
-
-
-    nc_grid <- eval(parse(text = stringr::str_c(
-      "expand.grid(Longitude = nc_lon, Latitude = nc_lat",
-      ifelse(length(depths) > 1, ",Depth = depths", ""),
-      ifelse(length(times) > 1, ",Time = times", ""),
-      ")"
-    )))
-
-
-    if(is.null(vars)){
-    	vars <- system(stringr::str_c("cdo showname ", file_name), intern = TRUE, ignore.stderr = TRUE)
-    	vars <- stringr::str_split(vars, " ") %>%
-    		.[[1]]
-    	vars <- vars[nchar(vars) > 0]
-
-    }
-
-    for (vv in vars) {
-      nc_var <- ncdf4::ncvar_get(nc_raw, vv)
-      nc_grid$var <- nc_var %>% as.numeric()
-      names(nc_grid)[ncol(nc_grid)] <- vv
-    }
-
-    nc_grid <- nc_grid %>%
-      # tidyr::drop_na() %>%
-      dplyr::as_tibble()
-
-    ncdf4::nc_close(nc_raw)
+    nc_grid <- nc_read("raw_clipped.nc")
     return(nc_grid)
   }
 
