@@ -3,7 +3,7 @@
 #' @description This function calculates the areas of each grid cell
 #' @param ff This is the file to analyze.
 #' @param cdo_output set to TRUE if you want to see the cdo output
-#' @return data frame with the cell areas
+#' @return data frame with the cell areas in square metres
 #' @export
 
 # need an option for cacheing results...
