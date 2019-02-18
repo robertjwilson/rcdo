@@ -24,6 +24,19 @@
 # need an option for cacheing results...
 
 nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coord_res = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_scale = NULL, remapping = "bil", cdo_output = FALSE) {
+
+
+
+	# check that the vars given are actually in the file
+	if(!is.null(vars)){
+		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
+		for(vv in vars){
+			if(vv %in% nc_variables(ff) == FALSE)
+				stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+		}
+	}
+
+
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
