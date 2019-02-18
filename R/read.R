@@ -5,6 +5,7 @@
 # a way to estimate the potential size of the data frame to ask the user of they still want to read it in
 # the above works right now for the lonlat case. Get it working for the curvilinear case
 
+# need an option for cacheing results potentially...
 
 # a smarter way to handle nas in the data frame, as some values might be na but others not
 # add drop_na option
@@ -24,7 +25,19 @@
 #' @param dim_check The number of data points in the final data frame that will ask to continue. Set to NULL if you don't want to check.
 #' @export
 
-# need an option for cacheing results...
+#'@examples
+
+#' # Reading in data from the NOAA World Ocean Atlas sample file.
+#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+#' # if we simply want to read the data into a tibble, we just need to use nc_read
+
+#' nc_read(ff)
+
+#' # By default nc_read reads in all data fields. But we probably just want to subset it
+#' # If we only want to read in specific fields, we can use vars
+
+#' nc_read(ff, vars = "t_an")
+
 
 nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
 
@@ -190,41 +203,3 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   ncdf4::nc_close(nc_raw)
   return(nc_grid)
 }
-
-#'@examples
-#' function to test
-#' This is NOAA World Ocean Atlas 2018 temperature for 2005-2017. January
-#' Available from https://www.nodc.noaa.gov/cgi-bin/OC5/woa18/woa18.pl?parameter=t
-
-#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-
-
-#' if we simply want to read the data into a tibble, we just need to use nc_read
-
-#' nc_read(ff)
-
-
-#' by default nc_read reads in all data fields. But we probably just want to subset it
-#' We can read t_an (objectively analyzed mean sea water temparture) in using the vars command
-
-#' nc_read(ff, vars = "t_an")
-#' '@examples
-#' function to test
-#' This is NOAA World Ocean Atlas 2018 temperature for 2005-2017. January
-#' Available from https://www.nodc.noaa.gov/cgi-bin/OC5/woa18/woa18.pl?parameter=t
-
-#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-
-
-#' if we simply want to read the data into a tibble, we just need to use nc_read
-
-#' nc_read(ff)
-
-
-#' by default nc_read reads in all data fields. But we probably just want to subset it
-#' We can read t_an (objectively analyzed mean sea water temparture) in using the vars command
-
-#' nc_read(ff, vars = "t_an")
-
-
-
