@@ -2,7 +2,7 @@
 % Please edit documentation in R/depths.R
 \name{nc_depths}
 \alias{nc_depths}
-\title{get the depths available in a netcdf file}
+\title{nc_depths}
 \usage{
 nc_depths(ff)
 }
@@ -11,4 +11,10 @@ nc_depths(ff)
 }
 \description{
 This function will tell you the depths available in a netcdf file
+}
+\examples{
+# Get the depths in the sample file
+ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+nc_depths(ff)
+
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/clip.R
 \name{nc_clip}
 \alias{nc_clip}
-\title{clip ncdf file}
+\title{nc_clip}
 \usage{
 nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
   90), vert_range = NULL, date_range = NULL, months = NULL,
@@ -31,4 +31,13 @@ nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
 }
 \description{
 This function allows you to clip a netcdf file to a specific latlon box
+}
+\examples{
+# Clipping data from the NOAA World Ocean Atlas sample file.
+ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+# clip to a specific depth range using vert_range
+nc_clip(ff, vert_range = c(1,5))
+# clip to a specific longitude and latitude box
+# Clipping to the region around the UK
+uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 }
