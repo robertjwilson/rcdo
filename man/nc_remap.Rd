@@ -43,6 +43,6 @@ ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 # remapping to 1 degree resolution across all depth layers
 nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), coord_res = 1)
 # remapping to 1 degree resolution for 5, 50 and 100 metres
-nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), vert_range = c(5, 50, 100), coord_res = 1)
+nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), vert_depths= c(5, 50, 100), coord_res = 1)
 
 }

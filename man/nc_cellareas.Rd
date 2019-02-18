@@ -12,7 +12,7 @@ nc_cellareas(ff, cdo_output = FALSE)
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 }
 \value{
-data frame with the cell areas
+data frame with the cell areas in square metres
 }
 \description{
 This function calculates the areas of each grid cell

@@ -38,7 +38,7 @@ nc_vertmean(ff, vars = NULL, lon_range = NULL, lat_range = NULL,
 data frame or netcdf file.
 }
 \description{
-This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the depth averaged value and the maximum depth used for the calculation.
 }
 \examples{
 # Calculating vertical mean NOAA world ocean atlas data to the region around the UK

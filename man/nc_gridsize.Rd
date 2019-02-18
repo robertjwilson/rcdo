@@ -4,7 +4,7 @@
 \alias{nc_gridsize}
 \title{nc_gridsize}
 \usage{
-nc_gridsize(ff, cdo_output = FALSE)
+nc_gridsize(ff, cdo_output = FALSE, date_range = NULL)
 }
 \arguments{
 \item{ff}{This is the file to move. This must be the full system path to the file.}
