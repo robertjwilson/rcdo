@@ -1,0 +1,51 @@
+
+#' @title grid cell areas of a ncdf file
+#' @description This function calculates the areas of each grid cell
+#' @param ff This is the file to analyze.
+#' @param cdo_output set to TRUE if you want to see the cdo output
+#' @return data frame with the cell areas
+#' @export
+
+# need an option for cacheing results...
+
+#'@examples
+
+#' # Calculating cell areas for NOAA world ocean atlas data sample file
+#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+#' nc_cellareas(ff)
+
+
+nc_cellareas <- function(ff,  cdo_output = FALSE) {
+
+	if(!file_valid(ff))
+		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+
+	if(!cdo_compatible(ff))
+		stop("error: file is not cdo compatible")
+
+		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+			warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
+
+  init_dir <- getwd()
+  on.exit(setwd(init_dir))
+
+  # Create a temporary directory and move the file we are manipulating to it...
+  temp_dir <- tempdir()
+
+  # copy the file to the temporary
+
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
+  setwd("~")
+  setwd(temp_dir)
+
+  if(getwd() == init_dir)
+  	stop("error: there was a problem changing the directory")
+
+  # use gridarea to calculate the grid cell area
+  system("cdo gridarea raw.nc grid_area.nc", ignore.stderr = (cdo_output == FALSE))
+
+  # read the grid cell areas to a data frame
+   nc_read("grid_area.nc", cdo_output = cdo_output)
+
+}
+
