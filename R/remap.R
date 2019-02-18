@@ -1,5 +1,6 @@
 
 # to be added: year range options
+# figure out how to handle very large files. Use gebco bath
 
 # think about whether multiple grids should throw a warning or error
 
@@ -13,7 +14,7 @@
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
 #' @param months Months you want. c(month_1, month_2,...)
 #' @param years Months you want. c(year_1, year_2,...)
-#' @param coord_rds longitudinal and latitudinal range for the regridding. c(lon_res, lat_res).
+#' @param coord_rds longitudinal and latitudinal range for the regridding. c(lon_res, lat_res). If one number given the lon_res and lat_res will be the same.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param cdo_output set to TRUE if you want to see the cdo output
@@ -30,9 +31,24 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 	if(!is.numeric(coord_res))
 		stop("error: check coord_res format")
 
-	if(length(coord_res) != 2)
-		stop("error: check coord_res format")
+	if(length(coord_res) != 2){
+		warning("only 1 variable given for coord_res. This will be used for both lon_res and lat_res")
+		coord_res <- c(coord_res[1], coord_res[1])
+	}
 
+
+	# check that the vars given are actually in the file
+	if(!is.null(vars)){
+		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
+	for(vv in vars){
+		if(vv %in% nc_variables(ff) == FALSE)
+			stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+
+	}
+
+
+
+	}
 
 
 	if(!cdo_compatible(ff))
@@ -89,12 +105,24 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
   # ad the variables we need to add attributes for
 
+
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw.nc")
   }
 
+
+  # now, subset it to a specific latlonbox
+  # to be added later
+#
+#   lon_min <- max(-180, lon_range[1] - 5)
+#   lat_min <- max(-90, lat_range[1] - 5)
+#   lon_max <- max(180, lon_range[2] + 5)
+#   lat_max <- max(90, lat_range[2] + 5)
+#
+#     system(stringr::str_c("cdo sellonlatbox,", lon_min, ",", lat_min, ",", lon_max, ",", lat_max, " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+#     file.rename("dummy.nc", "raw.nc")
 
 
    if (!is.null(vert_depths)) {
