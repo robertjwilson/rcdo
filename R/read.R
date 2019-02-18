@@ -29,7 +29,7 @@
 nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
 
 	if(!file_valid(ff))
-		stop(stringr::str_glue("error: {ff} does not exist"))
+		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
 
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
@@ -191,16 +191,23 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   return(nc_grid)
 }
 
-#
-#  source("~/Dropbox/rcdo/R/utils.R")
-#
-#  ff <- "~/Downloads/dummy.nc"
-#
-# 	test <- as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE))
-#
-# #
-#  nc_read("~/Downloads/dummy.nc", dim_check = 1000000)
+# '@examples
+# function to test
+# This is NOAA World Ocean Atlas 2018 temperature for 2005-2017. January
+# Available from https://www.nodc.noaa.gov/cgi-bin/OC5/woa18/woa18.pl?parameter=t
 
+# ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+
+
+# if we simply want to read the data into a tibble, we just need to use nc_read
+
+# nc_read(ff)
+
+
+# by default nc_read reads in all data fields. But we probably just want to subset it
+# We can read t_an (objectively analyzed mean sea water temparture) in using the vars command
+
+# nc_read(ff, vars = "t_an")
 
 
 
