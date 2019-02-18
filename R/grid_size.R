@@ -6,7 +6,11 @@
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @export
 
-nc_gridsize <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE) {
+nc_gridsize <- function(ff, cdo_output = FALSE) {
+
+
+	if(!file_valid(ff))
+		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
