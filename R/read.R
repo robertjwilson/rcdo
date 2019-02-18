@@ -51,6 +51,15 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
 
 
+	# check that the vars given are actually in the file
+	if(!is.null(vars)){
+		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
+		for(vv in vars){
+			if(vv %in% nc_variables(ff) == FALSE)
+				stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+		}
+	}
+
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
