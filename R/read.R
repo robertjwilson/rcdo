@@ -191,7 +191,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   return(nc_grid)
 }
 
-<<<<<<< HEAD
 #'@examples
 #' function to test
 #' This is NOAA World Ocean Atlas 2018 temperature for 2005-2017. January
@@ -209,7 +208,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 #' We can read t_an (objectively analyzed mean sea water temparture) in using the vars command
 
 #' nc_read(ff, vars = "t_an")
-=======
 # '@examples
 # function to test
 # This is NOAA World Ocean Atlas 2018 temperature for 2005-2017. January
@@ -227,7 +225,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 # We can read t_an (objectively analyzed mean sea water temparture) in using the vars command
 
 # nc_read(ff, vars = "t_an")
->>>>>>> d7cc965883ad4552de07349411f61c018d86a583
 
 
 
