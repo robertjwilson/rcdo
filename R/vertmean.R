@@ -5,7 +5,7 @@
 
 
 #' @title nc_vertmean
-#' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+#' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the depth averaged value and the maximum depth used for the calculation.
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param lon_range longitude range. c(min_longituse, max_longitude).
@@ -218,6 +218,22 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
   }
 
   # calculate the vertical mean
+  max_depths <- nc_read("raw_clipped.nc") %>%
+  	tidyr::drop_na()
+
+
+ 	#it's possible only one vertical depth has been selected. Add depth in in this case
+	depths_selected <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
+
+	if(length(depths_selected) == 1)
+  	max_depths <- max_depths %>%
+			dplyr::mutate(Depth = depths_selected[1])
+
+  max_depths <- max_depths %>%
+  	dplyr::group_by(Longitude, Latitude) %>%
+  	dplyr::summarize(Maximum_Depth = max(Depth)) %>%
+  	dplyr::ungroup() %>%
+  	dplyr::select(Longitude, Latitude, Maximum_Depth)
 
   system(stringr::str_c("cdo vertmean raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
@@ -227,6 +243,8 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
   if (is.null(out_file)) {
     print("converting to a data frame")
     nc_grid <- nc_read("raw_clipped.nc")
+    nc_grid <- nc_grid %>%
+    	dplyr::inner_join(max_depths)
     return(nc_grid)
   }
   # save the file, if that's what you chose to do
@@ -235,6 +253,4 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
-
-
 
