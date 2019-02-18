@@ -85,7 +85,7 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
   # copy the file to the temporary
 
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
   setwd(temp_dir)
 
   if(getwd() == init_dir)
