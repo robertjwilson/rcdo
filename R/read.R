@@ -141,7 +141,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
   # this should be a valid assumption
 
-  if ("curvilinear" %nin% grid_type) {
+  if ("curvilinear" %nin% grid_type & "unstructured" %nin% grid_type) {
 
     # we need to estimate the data frame size for the curvilinear grid case
 
