@@ -6,6 +6,13 @@
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @export
 
+#'@examples
+
+#' # Get the grid size of the sample file
+#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+#' nc_gridsize(ff)
+#'
+
 nc_gridsize <- function(ff, cdo_output = FALSE) {
 
 
