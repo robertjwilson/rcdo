@@ -65,9 +65,10 @@ file_valid <- function(ff){
 	if(!file.exists(ff))
 		return(FALSE)
 
+	if(!endsWith(ff, ".nc"))
+		return(FALSE)
+
 	return(TRUE)
-
-
 
 
 }
