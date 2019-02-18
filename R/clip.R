@@ -37,6 +37,14 @@
 
 nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
 
+	# check that the vars given are actually in the file
+	if(!is.null(vars)){
+		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
+		for(vv in vars){
+			if(vv %in% nc_variables(ff) == FALSE)
+				stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+		}
+	}
 
 	if(!file_valid(ff))
 		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
