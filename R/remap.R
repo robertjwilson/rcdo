@@ -23,6 +23,20 @@
 
 # need an option for cacheing results...
 
+#'@examples
+
+#' # Remapping NOAA world ocean atlas data to the region around the UK
+#' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+#' # remapping to 1 degree resolution across all depth layers
+#' nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), coord_res = 1)
+
+#' # remapping to 1 degree resolution for 5, 50 and 100 metres
+#' nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), vert_range = c(5, 50, 100), coord_res = 1)
+
+#'
+
+
+
 nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
 
 	if(!file_valid(ff))
