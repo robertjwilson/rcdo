@@ -162,3 +162,22 @@ generate_grid <- function(coords) {
   }
   grid_type
 }
+
+
+
+# function to create new temporary folder...
+
+
+random_temp <- function(){
+
+	check <- TRUE
+	while(check){
+		new_temp <- stringr::str_c(dirname(tempdir()), "/",  stringi::stri_rand_strings(1,7, '[A-Z]'))
+		if(!dir.exists(new_temp)){
+			dir.create(new_temp)
+		break
+		}
+	}
+	new_temp
+}
+
