@@ -1,5 +1,5 @@
 
-#' @title nc_gridsize
+#' @title Calculate number of cells in netcdf grid
 #'
 #' @description This function provides the number of cells in the horizontal netcdf grid
 #' @param ff This is the file to analyze.

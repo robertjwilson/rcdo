@@ -2,7 +2,7 @@
 
 # to do: this potentially should be a list showing depth range and depths separately
 
-#' @title nc_depths
+#' @title Find depths in a netcdf file
 #'
 #' @description Find depths available in a netcdf file
 #' @param ff This is the file to check.

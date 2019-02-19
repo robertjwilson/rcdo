@@ -4,7 +4,7 @@
 # code to work out if the date ranges are invalid
 
 
-#' @title nc_clip
+#' @title Clip a netcdf file
 #'
 #' @description Clip a netcdf file to a specific latlon box
 #' @param ff This is the file to clip.

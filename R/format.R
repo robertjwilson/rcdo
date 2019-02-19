@@ -1,6 +1,6 @@
 
 
-#' @title nc_format
+#' @title Find the format of a netcdf file.
 #'
 #' @description This function will tell you the format of a netcdf file
 #' @param ff This is the file to check.

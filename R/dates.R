@@ -1,7 +1,7 @@
 
 
 
-#' @title nc_dates
+#' @title Find dates in a netcdf file
 #'
 #' @description Find dates in a netcdf file
 #' @param ff This is the file to read dates from.
