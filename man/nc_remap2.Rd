@@ -4,9 +4,8 @@
 \alias{nc_remap2}
 \title{remap a ncdf file (development version)}
 \usage{
-nc_remap2(ff, vars = NULL, coords = NULL, date_range = NULL,
-  months = NULL, years = NULL, out_file = NULL, vert_depths = NULL,
-  remapping = "bil", cdo_output = FALSE)
+nc_remap2(ff, vars = NULL, coords = NULL, vert_depths = NULL,
+  out_file = NULL, cdo_output = FALSE, remapping = "bil", ...)
 }
 \arguments{
 \item{ff}{This is the file to regrid.}
@@ -15,17 +14,13 @@ nc_remap2(ff, vars = NULL, coords = NULL, date_range = NULL,
 
 \item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
 
-\item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format. Ignored if not supplied}
-
-\item{months}{Months you want. c(month_1, month_2,...). Ignored if not supplied.}
-
-\item{years}{Years you want. c(year_1, year_2,...). Ignored if not supplied.}
-
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
+
+\item{cdo_output}{set to TRUE if you want to see the cdo output}
 
 \item{remapping}{The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.}
 
-\item{cdo_output}{set to TRUE if you want to see the cdo output}
+\item{...}{optional arguments to be sent to nc_clip if you need to clip prior to processing.}
 }
 \value{
 data frame or netcdf file.
