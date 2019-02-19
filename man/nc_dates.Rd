@@ -2,7 +2,7 @@
 % Please edit documentation in R/dates.R
 \name{nc_dates}
 \alias{nc_dates}
-\title{nc_dates}
+\title{Find dates in a netcdf file}
 \usage{
 nc_dates(ff)
 }

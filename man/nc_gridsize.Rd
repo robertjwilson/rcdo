@@ -2,7 +2,7 @@
 % Please edit documentation in R/grid_size.R
 \name{nc_gridsize}
 \alias{nc_gridsize}
-\title{nc_gridsize}
+\title{Calculate number of cells in netcdf grid}
 \usage{
 nc_gridsize(ff, cdo_output = FALSE, date_range = NULL)
 }

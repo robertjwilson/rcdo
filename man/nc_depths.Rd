@@ -2,7 +2,7 @@
 % Please edit documentation in R/depths.R
 \name{nc_depths}
 \alias{nc_depths}
-\title{nc_depths}
+\title{Find depths in a netcdf file}
 \usage{
 nc_depths(ff)
 }

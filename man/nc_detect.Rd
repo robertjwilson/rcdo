@@ -2,14 +2,17 @@
 % Please edit documentation in R/netcdf_detection.R
 \name{nc_detect}
 \alias{nc_detect}
-\title{nc_detect}
+\title{search netcdf files in folder}
 \usage{
 nc_detect(directory = getwd(), var = NULL, recursive = TRUE)
 }
 \arguments{
-\item{ff}{This is the file to check. Must be the full system path to the file.}
+\item{directory}{This is the directory to check.}
 
 \item{vars}{a character string of the variable to search for}
+}
+\value{
+list of files
 }
 \description{
 This function will list the netcdf files in a directory that contain a specified variable

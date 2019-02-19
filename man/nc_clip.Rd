@@ -2,7 +2,7 @@
 % Please edit documentation in R/clip.R
 \name{nc_clip}
 \alias{nc_clip}
-\title{nc_clip}
+\title{Clip a netcdf file}
 \usage{
 nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
   90), vert_range = NULL, date_range = NULL, months = NULL,

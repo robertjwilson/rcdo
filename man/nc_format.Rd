@@ -2,7 +2,7 @@
 % Please edit documentation in R/format.R
 \name{nc_format}
 \alias{nc_format}
-\title{nc_format}
+\title{Find the format of a netcdf file.}
 \usage{
 nc_format(ff)
 }
