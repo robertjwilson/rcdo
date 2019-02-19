@@ -50,7 +50,7 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
     stop("error: file is not cdo compatible")
   }
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1) {
+  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE), ignore.stderr = (cdo_output == FALSE)) > 1) {
     warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
   }
 
@@ -104,12 +104,12 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
       stop("error check date range supplied")
     }
 
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
   if (!is.null(months)) {
-    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
+    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE,  ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -124,12 +124,12 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
       stop("error: check months supplied")
     }
 
-    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
   if (!is.null(years)) {
-    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
+    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE,  ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -143,7 +143,7 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
     if (num_years == 0) {
       stop("error: check years supplied")
     }
-    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
