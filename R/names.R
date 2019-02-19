@@ -8,7 +8,8 @@
 #' @description This function will tell you the variables in a netcdf file
 #' @param ff This is the file to read variables from.
 #' @export
-
+#'
+#' @examples
 
 #' # Get the variable names in the NOAA WOA sample file
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
