@@ -33,7 +33,7 @@
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap_(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
-nc_remap_ <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
+nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
