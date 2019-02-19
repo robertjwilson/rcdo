@@ -88,7 +88,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 #   }
 
   # Create a temporary directory and move the file we are manipulating to it...
-  temp_dir <- tempdir()
+  temp_dir <- random_temp()
   dir.exists(temp_dir)
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
