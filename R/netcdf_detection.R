@@ -1,10 +1,11 @@
 
 
-#' @title nc_detect
+#' @title search netcdf files in folder
 #'
 #' @description This function will list the netcdf files in a directory that contain a specified variable
-#' @param ff This is the file to check. Must be the full system path to the file.
+#' @param directory This is the directory to check.
 #' @param vars a character string of the variable to search for
+#' @return list of files
 #' @export
 
 nc_detect <- function(directory = getwd(), var = NULL, recursive = TRUE) {
