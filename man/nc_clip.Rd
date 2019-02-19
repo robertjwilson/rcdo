@@ -9,7 +9,7 @@ nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
   years = NULL, out_file = NULL, cdo_output = FALSE)
 }
 \arguments{
-\item{ff}{This is the file to clip. This must be the full system path to the file.}
+\item{ff}{This is the file to clip.}
 
 \item{vars}{Select the variables you want. If this is not given, all variables will be regridded.}
 
@@ -30,7 +30,7 @@ nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 }
 \description{
-This function allows you to clip a netcdf file to a specific latlon box
+Clip a netcdf file to a specific latlon box
 }
 \examples{
 # Clipping data from the NOAA World Ocean Atlas sample file.

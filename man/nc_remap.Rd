@@ -9,7 +9,7 @@ nc_remap(ff, vars = NULL, lon_range, lat_range, coord_res,
   vert_depths = NULL, remapping = "bil", cdo_output = FALSE)
 }
 \arguments{
-\item{ff}{This is the file to move. This must be the full system path to the file.}
+\item{ff}{This is the file to remap.}
 
 \item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
 

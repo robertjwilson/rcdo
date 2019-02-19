@@ -7,7 +7,7 @@
 nc_gridsize(ff, cdo_output = FALSE, date_range = NULL)
 }
 \arguments{
-\item{ff}{This is the file to move. This must be the full system path to the file.}
+\item{ff}{This is the file to analyze.}
 
 \item{cdo_output}{Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.}
 }

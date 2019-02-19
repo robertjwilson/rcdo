@@ -2,7 +2,7 @@
 % Please edit documentation in R/vertmean.R
 \name{nc_vertmean}
 \alias{nc_vertmean}
-\title{nc_vertmean}
+\title{Calculate vertical means from a netcdf file.}
 \usage{
 nc_vertmean(ff, vars = NULL, lon_range = NULL, lat_range = NULL,
   coord_res = NULL, date_range = NULL, months = NULL, years = NULL,
@@ -10,7 +10,7 @@ nc_vertmean(ff, vars = NULL, lon_range = NULL, lat_range = NULL,
   cdo_output = FALSE)
 }
 \arguments{
-\item{ff}{This is the file to move. This must be the full system path to the file.}
+\item{ff}{This is the file to analyze.}
 
 \item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
 

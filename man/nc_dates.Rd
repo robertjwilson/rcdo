@@ -7,10 +7,10 @@
 nc_dates(ff)
 }
 \arguments{
-\item{ff}{This is the file to check. Must be the full system path to the file.}
+\item{ff}{This is the file to read dates from.}
 }
 \description{
-This function will tell you the dates in a netcdf file
+Find dates in a netcdf file
 }
 \examples{
 # Get the dates in the sample file

@@ -15,7 +15,7 @@ nc_cellareas(ff, cdo_output = FALSE)
 data frame with the cell areas in square metres
 }
 \description{
-This function calculates the areas of each grid cell
+Calculates the areas of each grid cell of a netcdf file.
 }
 \examples{
 # Calculating cell areas for NOAA world ocean atlas data sample file

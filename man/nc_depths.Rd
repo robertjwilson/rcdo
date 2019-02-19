@@ -10,7 +10,7 @@ nc_depths(ff)
 \item{ff}{This is the file to check.}
 }
 \description{
-This function will tell you the depths available in a netcdf file
+Find depths available in a netcdf file
 }
 \examples{
 # Get the depths in the sample file

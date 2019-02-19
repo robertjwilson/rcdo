@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.R
 \name{nc_read}
 \alias{nc_read}
-\title{nc_read}
+\title{Read a netcdf file to a data frame}
 \usage{
 nc_read(ff, vars = NULL, date_range = NULL, cdo_output = FALSE,
   dim_check = 1.5e+08)
