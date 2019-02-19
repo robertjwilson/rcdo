@@ -1,14 +1,12 @@
 
 # to do:
 # this really should be a data frame giving the units, full descriptions etc.
-
-
 #' @title List the variables in a netcdf file.
-#' @description This function will tell you the variables in a netcdf file
+#' @description This function will tell you the variables in a netcdf file.
 #' @param ff This is the file to read variables from.
+#' @return list of variables
 #' @export
 #' @examples
-
 #' # Get the variable names in the NOAA WOA sample file
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' nc_variables(ff)
