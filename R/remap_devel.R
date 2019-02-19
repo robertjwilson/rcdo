@@ -113,7 +113,6 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
     file.remove(stringr::str_c(temp_dir, "/raw.nc"))
     file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
     file.remove(stringr::str_c(temp_dir, "/mygrid"))
-    print(temp_dir)
 
     return(nc_grid)
   }
