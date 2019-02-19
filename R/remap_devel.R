@@ -5,7 +5,7 @@
 # think about whether multiple grids should throw a warning or error
 
 
-#' @title remap a ncdf file
+#' @title remap a ncdf file (development version)
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 #' @param ff This is the file to move. This must be the full system path to the file.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
@@ -29,10 +29,10 @@
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # remapping to 1 degree resolution across all depth layers
 #' uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
-#' nc_remap_(ff, vars = "t_an", coords = uk_coords)
+#' nc_remap2(ff, vars = "t_an", coords = uk_coords)
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
-#' nc_remap_(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
+#' nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
