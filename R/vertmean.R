@@ -4,9 +4,9 @@
 # the function should perhaps be modified so that it takes ..., and then sends ... to remap
 
 
-#' @title nc_vertmean
+#' @title Calculate vertical means from a netcdf file.
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the depth averaged value and the maximum depth used for the calculation.
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @param ff This is the file to analyze.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param lon_range longitude range. c(min_longituse, max_longitude).
 #' @param lat_range latitude range. c(min_latitude, max_latitude).
@@ -82,9 +82,9 @@ nc_vertmean <- function(ff, vars = NULL, lon_range = NULL, lat_range = NULL, coo
 
   # make sure all of the relevant inputs have been supplied for horizontal gridding
   grid_check <- (as.integer(!is.null(lon_range)) +  as.integer(!is.null(lat_range)) + as.integer(!is.null(coord_res)))
-	# print(as.integer(!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)))
+  # print(as.integer(!is.null(lon_range) + !is.null(lat_range) + !is.null(coord_res)))
   if (grid_check >= 1 & grid_check < 3)
-      stop("error: check lon_range, lat_range and coord_res are all supplied")
+  	stop("error: check lon_range, lat_range and coord_res are all supplied")
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
