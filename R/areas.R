@@ -1,6 +1,6 @@
 
 #' @title grid cell areas of a ncdf file
-#' @description This function calculates the areas of each grid cell
+#' @description Calculates the areas of each grid cell of a netcdf file.
 #' @param ff This is the file to analyze.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @return data frame with the cell areas in square metres
