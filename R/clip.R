@@ -6,8 +6,8 @@
 
 #' @title nc_clip
 #'
-#' @description This function allows you to clip a netcdf file to a specific latlon box
-#' @param ff This is the file to clip. This must be the full system path to the file.
+#' @description Clip a netcdf file to a specific latlon box
+#' @param ff This is the file to clip.
 #' @param vars Select the variables you want. If this is not given, all variables will be regridded.
 #' @param lon_range longitude range. c(min_longituse, max_longitude).
 #' @param lat_range latitude range. c(min_latitude, max_latitude).
