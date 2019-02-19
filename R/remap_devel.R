@@ -7,14 +7,12 @@
 
 #' @title remap a ncdf file (development version)
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
-#' @param grid_df A matrix or data frame of the form longitude, latitude with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
-#' @param lat_range latitude range. c(min_latitude, max_latitude).
-#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
-#' @param months Months you want. c(month_1, month_2,...)
-#' @param years Months you want. c(year_1, year_2,...)
-#' @param coord_rds longitudinal and latitudinal range for the regridding. c(lon_res, lat_res). If one number given the lon_res and lat_res will be the same.
+#' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
+#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format. Ignored if not supplied
+#' @param months Months you want. c(month_1, month_2,...). Ignored if not supplied.
+#' @param years Years you want. c(year_1, year_2,...). Ignored if not supplied.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param cdo_output set to TRUE if you want to see the cdo output
