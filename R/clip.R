@@ -207,7 +207,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
     # change the working directory back to the original
 
     setwd(init_dir)
-
+	file.remove(stringr::str_c(temp_dir, "/raw.nc"))
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
 
