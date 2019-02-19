@@ -10,12 +10,10 @@
 #' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
-#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format. Ignored if not supplied
-#' @param months Months you want. c(month_1, month_2,...). Ignored if not supplied.
-#' @param years Years you want. c(year_1, year_2,...). Ignored if not supplied.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param cdo_output set to TRUE if you want to see the cdo output
+#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to processing.
 #' @return data frame or netcdf file.
 #' @export
 
@@ -31,7 +29,7 @@
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
-nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
+nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", ...) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -96,54 +94,9 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
 
   file.rename("raw.nc", "raw_clipped.nc")
 
-  if (!is.null(date_range)) {
-    min_date <- lubridate::dmy(date_range[1])
-    max_date <- lubridate::dmy(date_range[2])
-
-    if (is.na(min_date) | is.na(max_date)) {
-      stop("error check date range supplied")
-    }
-
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
-    file.rename("dummy.nc", "raw_clipped.nc")
-  }
-
-  if (!is.null(months)) {
-    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE,  ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]] %>%
-      as.integer()
-    num_months <- 0
-    for (mm in months) {
-      if (mm %in% unique(file_months[complete.cases(file_months)])) {
-        num_months <- num_months + 1
-      }
-    }
-
-    if (num_months == 0) {
-      stop("error: check months supplied")
-    }
-
-    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
-    file.rename("dummy.nc", "raw_clipped.nc")
-  }
-
-  if (!is.null(years)) {
-    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE,  ignore.stderr = (cdo_output == FALSE)) %>%
-      stringr::str_split(" ") %>%
-      .[[1]] %>%
-      as.integer()
-    num_years <- 0
-    for (yy in years) {
-      if (yy %in% unique(file_years[complete.cases(file_years)])) {
-        num_years <- num_years + 1
-      }
-    }
-
-    if (num_years == 0) {
-      stop("error: check years supplied")
-    }
-    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"),  ignore.stderr = (cdo_output == FALSE))
+  # clip the file
+  if (length(list(...)) >= 1) {
+    nc_clip("raw_clipped.nc", ..., out_file = "dummy.nc")
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
@@ -154,8 +107,14 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
   # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
-
     nc_grid <- nc_read("raw_clipped.nc")
+    # remove the files that have been generated
+    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+    file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
+    file.remove(stringr::str_c(temp_dir, "/mygrid"))
+    print(temp_dir)
+
     return(nc_grid)
   }
 
@@ -166,3 +125,20 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
+
+# library(rcdo)
+#
+# source("~/Dropbox/rcdo/R/utils.R")
+#
+# # Remapping NOAA world ocean atlas data to the region around the UK
+# ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+# # remapping to 1 degree resolution across all depth layers
+# uk_coords <- expand.grid(Longitude = seq(-60, 10, 1), Latitude = seq(48, 62, 1))
+# nc_remap2(ff, vars = "t_an", coords = uk_coords)
+#
+# library(tidyverse)
+# # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
+# nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5)) %>%
+#   drop_na() %>%
+#   ggplot(aes(Longitude, Latitude, colour = t_an)) +
+#   geom_point()
