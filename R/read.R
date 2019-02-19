@@ -47,7 +47,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   if (!cdo_compatible(ff)) {
     stop("error: file is not cdo compatible")
   }
-	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = TRUE)) > 1)
 		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
 
 

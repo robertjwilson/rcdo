@@ -50,7 +50,7 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
     stop("error: file is not cdo compatible")
   }
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE), ignore.stderr = (cdo_output == FALSE)) > 1) {
+  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
     warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
   }
 
