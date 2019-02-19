@@ -2,34 +2,30 @@
 % Please edit documentation in R/remap_devel.R
 \name{nc_remap2}
 \alias{nc_remap2}
-\title{remap a ncdf file}
+\title{remap a ncdf file (development version)}
 \usage{
 nc_remap2(ff, vars = NULL, coords = NULL, date_range = NULL,
   months = NULL, years = NULL, out_file = NULL, vert_depths = NULL,
   remapping = "bil", cdo_output = FALSE)
 }
 \arguments{
-\item{ff}{This is the file to move. This must be the full system path to the file.}
+\item{ff}{This is the file to regrid.}
 
 \item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
 
-\item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.}
+\item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
 
-\item{months}{Months you want. c(month_1, month_2,...)}
+\item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format. Ignored if not supplied}
 
-\item{years}{Months you want. c(year_1, year_2,...)}
+\item{months}{Months you want. c(month_1, month_2,...). Ignored if not supplied.}
+
+\item{years}{Years you want. c(year_1, year_2,...). Ignored if not supplied.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
 \item{remapping}{The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
-
-\item{grid_df}{A matrix or data frame of the form longitude, latitude with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
-
-\item{lat_range}{latitude range. c(min_latitude, max_latitude).}
-
-\item{coord_rds}{longitudinal and latitudinal range for the regridding. c(lon_res, lat_res). If one number given the lon_res and lat_res will be the same.}
 }
 \value{
 data frame or netcdf file.
@@ -43,8 +39,8 @@ This function allows you to remap a netcdf horizontally and vertically to a spec
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 # remapping to 1 degree resolution across all depth layers
 uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
-nc_remap_(ff, vars = "t_an", coords = uk_coords)
+nc_remap2(ff, vars = "t_an", coords = uk_coords)
 
 # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
-nc_remap_(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
+nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 }
