@@ -15,7 +15,7 @@
 # also, add a check for the number of horizontal grids. Shouldn't read the netcdf if there is more than 1 GB(ish)
 
 
-#' @title nc_read
+#' @title Read a netcdf file to a data frame
 #'
 #' @description This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 #' @param ff This is the file to read.
