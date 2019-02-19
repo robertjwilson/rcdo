@@ -7,7 +7,7 @@
 
 #' @title remap a ncdf file
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @param ff This is the file to remap.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param lon_range longitude range. c(min_longituse, max_longitude).
 #' @param lat_range latitude range. c(min_latitude, max_latitude).
