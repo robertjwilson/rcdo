@@ -168,28 +168,3 @@ nc_remap_ <- function(ff, vars = NULL, coords = NULL, date_range = NULL, months 
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
-#
-# setwd("~")
-#
-# library(rcdo)
-# source("~/Dropbox/rcdo/R/utils.R")
-#
-#
-# library(tidyverse)
-#
-# cpr <- read_csv("~/Dropbox/Papers/Cfin_Climate_Change/Data/CPR/CPR_finmarchicus_1958to2015.csv") %>%
-#   select(Longitude, Latitude) %>%
-#   distinct()
-#
-#  ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-#  # remapping to 1 degree resolution across all depth layers
-#  uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
-#
-#  # remapping to 1 degree resolution for 5, 50 and 100 metres
-#  nc_remap_(ff, vars = "t_an", coords = cpr, vert_depths = c(10)) %>%
-#  	drop_na() %>%
-#   ggplot(aes(Longitude, Latitude, colour = t_an)) +
-#   geom_point()
-#
-#
-
