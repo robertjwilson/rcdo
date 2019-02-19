@@ -2,7 +2,7 @@
 #' @title nc_gridsize
 #'
 #' @description This function provides the number of cells in the horizontal netcdf grid
-#' @param ff This is the file to move. This must be the full system path to the file.
+#' @param ff This is the file to analyze.
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @export
 
