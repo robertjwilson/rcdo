@@ -3,8 +3,8 @@
 
 #' @title nc_dates
 #'
-#' @description This function will tell you the dates in a netcdf file
-#' @param ff This is the file to check. Must be the full system path to the file.
+#' @description Find dates in a netcdf file
+#' @param ff This is the file to read dates from.
 #' @export
 
 # need an option for cacheing results...
