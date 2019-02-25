@@ -60,19 +60,14 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 	}
 
-
 	# check that vars is a chracter stringr
 
 	if(!is.null(vars))
 		if(!is.character(vars))
 			stop("error: vars is not a character string")
 
-	 if(!cdo_compatible(ff))
-	 	stop("error: file is not cdo compatible")
-
 	 	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
-		stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
-
+			warning("warning: there is more than one horizontal grid in the netcdf file. Please check the output!")
 
   # take note of the working directory, so that it can be reset to this on exit
 
@@ -106,8 +101,16 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
-  # copy the file to the temporary
+  # add missing grid info if it's coming in as generic or something cdo cannot handle.
 
+	 add_missing_grid("raw.nc", vars = vars)
+
+	 # If this does not make the file cdo compatible, then we need to throw an error
+
+	 if(!cdo_compatible("raw.nc"))
+	 	stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+
+  # copy the file to the temporary
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
