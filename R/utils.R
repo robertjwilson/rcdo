@@ -181,3 +181,78 @@ random_temp <- function(){
 	new_temp
 }
 
+# function to add missing grid details if it is generic
+
+add_missing_grid <- function(ff, vars = NULL) {
+
+	grid_details <- system(stringr::str_c("cdo griddes ", ff), intern = TRUE, ignore.stderr = TRUE)
+
+	grid_details <- grid_details %>%
+		dplyr::as_tibble()
+
+	grid_details <- grid_details %>%
+		dplyr::mutate(Total = 0) %>%
+		dplyr::mutate(Total = ifelse(startsWith(value, "yunits"), 1, Total)) %>%
+		dplyr::mutate(Total = cumsum(Total)) %>%
+		dplyr::filter(Total < 1)
+
+	grid_type <- grid_details %>%
+		dplyr::filter(startsWith(value, "gridtype")) %>%
+		tidyr::separate(value, into = c("ignore", "grid")) %>%
+		dplyr::select(grid) %>%
+		dplyr::pull(grid)
+
+	grid_details <- grid_details %>%
+		dplyr::filter(startsWith(value, "xname") | startsWith(value, "yname")) %>%
+		tidyr::separate(value, into = c("ignore", "variable"), sep = "=") %>%
+		dplyr::mutate(ignore = stringr::str_replace_all(ignore, " ", "")) %>%
+		dplyr::mutate(variable = stringr::str_replace_all(variable, " ", "")) %>%
+		tidyr::spread(ignore, variable)
+	if (nrow(grid_details) != 0)
+		return(NULL)
+
+	# find the name of longitude and latitude. This can probably be improved upon....
+
+	long_use <- system(stringr::str_glue("cdo codetab {ff}"),intern = TRUE, ignore.stderr = TRUE) %>%
+		tibble::enframe() %>%
+		dplyr::filter(stringr::str_detect(value, "[L-l]ongitude")) %>%
+		dplyr::mutate(value = trimws(value)) %>%
+		dplyr::mutate(value = stringr::str_replace_all(value, "  ", " ")) %>%
+		tidyr::separate(value, into = c("ignore1", "coord"), sep = " ", extra = "drop") %>%
+		dplyr::pull(coord)
+
+	lat_use <- system(stringr::str_glue("cdo codetab {ff}"),intern = TRUE, ignore.stderr = TRUE) %>%
+		tibble::enframe() %>%
+		dplyr::filter(stringr::str_detect(value, "[L-l]atitude")) %>%
+		dplyr::mutate(value = trimws(value)) %>%
+		dplyr::mutate(value = stringr::str_replace_all(value, "  ", " ")) %>%
+		tidyr::separate(value, into = c("ignore1", "coord"), sep = " ", extra = "drop") %>%
+		dplyr::pull(coord)
+
+	# add the grid...
+
+	vars_2grid <- nc_variables(ff)
+	vars_2grid <- vars_2grid[vars_2grid != long_use & vars_2grid != lat_use]
+
+	if(!is.null(vars))
+		vars_2grid <- vars_2grid[vars_2grid %in% vars]
+
+
+	stringr::str_glue('{vars_2grid}@coordinates="{lat_use} {long_use}"') %>%
+		readr::write_lines("myattributes.txt")
+
+	# at this point, we need to only select what we want.
+	# This may still not be general to all generic grid netcdf files.
+
+	sel_names <- stringr::str_flatten(c(vars, long_use, lat_use), collapse = ",")
+	system(stringr::str_c("cdo selname,", stringr::str_flatten(sel_names, ","), " raw.nc dummy.nc"))
+	file.rename("dummy.nc", "raw.nc")
+
+
+	system("cdo setattribute,FILE=myattributes.txt raw.nc dummy.nc")
+	file.rename("dummy.nc", "raw.nc")
+	vars_2grid <- stringr::str_flatten(vars_2grid, collapse =  " ")
+
+	warning(stringr::str_glue("The raw file does not have a grid type cdo can work with. Grid information has been added for variables {vars_2grid}. Please check output!"))
+
+}
