@@ -30,7 +30,7 @@ nc_cellareas <- function(ff,  cdo_output = FALSE) {
   on.exit(setwd(init_dir))
 
   # Create a temporary directory and move the file we are manipulating to it...
-  temp_dir <- tempdir()
+  temp_dir <- random_temp()
 
   # copy the file to the temporary
 
