@@ -1,79 +1,52 @@
 
 # to be added: year range options
 # figure out how to handle very large files. Use gebco bath
+# add a check whether there are any vertical depths in the file
 
-# think about whether multiple grids should throw a warning or error
 
 
-#' @title remap a ncdf file
+#' @title remap a ncdf file (development version)
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
-#' @param ff This is the file to remap.
+#' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
-#' @param lon_range longitude range. c(min_longituse, max_longitude).
-#' @param lat_range latitude range. c(min_latitude, max_latitude).
-#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
-#' @param months Months you want. c(month_1, month_2,...)
-#' @param years Months you want. c(year_1, year_2,...)
-#' @param coord_rds longitudinal and latitudinal range for the regridding. c(lon_res, lat_res). If one number given the lon_res and lat_res will be the same.
+#' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
+#' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
 #' @param cdo_output set to TRUE if you want to see the cdo output
+#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.
 #' @return data frame or netcdf file.
 #' @export
 
 # need an option for cacheing results...
 
-#'@examples
-
+#' @examples
+#'
 #' # Remapping NOAA world ocean atlas data to the region around the UK
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # remapping to 1 degree resolution across all depth layers
-#' nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), coord_res = 1)
-
-#' # remapping to 1 degree resolution for 5, 50 and 100 metres
-#' nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), vert_depths= c(5, 50, 100), coord_res = 1)
-
+#' uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+#' nc_remap2(ff, vars = "t_an", coords = uk_coords)
 #'
+#' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
+#' nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
+nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, ...) {
+  if (!file_valid(ff)) {
+    stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+  }
 
-
-
-nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range = NULL, months = NULL, years = NULL, out_file = NULL, vert_depths = NULL, remapping = "bil", cdo_output = FALSE) {
-
-	if(!file_valid(ff))
-		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
-
-	if(!is.numeric(coord_res))
-		stop("error: check coord_res format")
-
-	if(length(coord_res) != 2){
-		warning("only 1 variable given for coord_res. This will be used for both lon_res and lat_res")
-		coord_res <- c(coord_res[1], coord_res[1])
-	}
-
-
-	# check that the vars given are actually in the file
-	if(!is.null(vars)){
-		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
-	for(vv in vars){
-		if(vv %in% nc_variables(ff) == FALSE)
-			stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
-
-	}
-
-
-
-	}
-
-
-	if(!cdo_compatible(ff))
-		stop("error: file is not cdo compatible")
-
-		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
-			warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
-
-
-	if(remapping %nin% c("bil", "dis", "nn"))
-		stop(stringr::str_glue("remapping method {remapping} is invalid"))
+  # check that the vars given are actually in the file
+  if (!is.null(vars)) {
+    var_list <- stringr::str_flatten(nc_variables(ff), collapse = " ")
+    for (vv in vars) {
+      if (vv %in% nc_variables(ff) == FALSE) {
+        stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+      }
+    }
+  }
+  if (remapping %nin% c("bil", "dis", "nn")) {
+    stop(stringr::str_glue("remapping method {remapping} is invalid"))
+  }
 
   # take note of the working directory, so that it can be reset to this on exit
 
@@ -81,43 +54,48 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
   on.exit(setwd(init_dir))
 
   # Create a temporary directory and move the file we are manipulating to it...
-  temp_dir <- tempdir()
+  temp_dir <- random_temp()
 
   # copy the file to the temporary
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
   setwd(temp_dir)
 
-  if(getwd() == init_dir)
-  	stop("error: there was a problem changing the directory")
-  # we need to set up a grid so that cdo can do a remapping. Easy enough
+  if (getwd() == init_dir) {
+    stop("error: there was a problem changing the directory")
+  }
 
-  lon_res <- coord_res[1]
-  lat_res <- coord_res[2]
+  # check if the raw file is compatible with cdo. If not, just regrid it
 
-  lon_range <- bin_value(lon_range, lon_res)
-  lat_range <- bin_value(lat_range, lat_res)
+  add_missing_grid("raw.nc", vars)
 
-  x_size <- length(seq(min(lon_range), max(lon_range), lon_res))
-  y_size <- length(seq(min(lat_range), max(lat_range), lat_res))
-  c(
-    "gridtype = lonlat", stringr::str_glue("xsize = {x_size}"),
-    stringr::str_glue("ysize = {y_size}"),
-    stringr::str_glue("xfirst = {min(lon_range)}"),
-    stringr::str_glue("yfirst = {min(lat_range)}"),
-    stringr::str_glue("xinc= {lon_res}"),
-    stringr::str_glue("yinc= {lat_res}")
-  ) %>%
-    readr::write_lines("mygrid")
 
-  # remove anything from the temporary folder to make sure there are no clashes etc.
-
-  if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+  # set the missing value, if it has not been set already
+  if(!is.null(na_value)){
+  	system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+  	file.rename("dummy.nc", "raw.nc")
   }
 
 
-  # ad the variables we need to add attributes for
+  # check the the number of grids..
+
+  if (as.integer(system(stringr::str_c("cdo ngrids ", "raw.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
+    warning("warning: there is more than one horizontal grid in the netcdf file.  Please check the outputs")
+  }
+
+
+  # Generate mygrid for remapping
+  generate_grid(coords)
+
+
+  # to be added
+  # check the validity of the variables selected
+
+  # if(!is.null(vars))
+  # 	var_validity("raw.nc", vars)
+  #
+  # if(is.null(vars))
+  # 	var_validity("raw.nc", nc_variables("raw.nc"))
 
 
   # Now, we need to select the variables we are interested in....
@@ -126,74 +104,19 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
     file.rename("dummy.nc", "raw.nc")
   }
 
+  if (!is.null(vert_depths)) {
+    vert_depths <- stringr::str_flatten(vert_depths, ",")
 
-  # now, subset it to a specific latlonbox
-  # to be added later
-#
-#   lon_min <- max(-180, lon_range[1] - 5)
-#   lat_min <- max(-90, lat_range[1] - 5)
-#   lon_max <- max(180, lon_range[2] + 5)
-#   lat_max <- max(90, lat_range[2] + 5)
-#
-#     system(stringr::str_c("cdo sellonlatbox,", lon_min, ",", lat_min, ",", lon_max, ",", lat_max, " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-#     file.rename("dummy.nc", "raw.nc")
-
-
-   if (!is.null(vert_depths)) {
-     vert_depths <- stringr::str_flatten(vert_depths, ",")
-
-     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-     file.rename("dummy.nc", "raw.nc")
-   }
+    system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    file.rename("dummy.nc", "raw.nc")
+  }
 
   file.rename("raw.nc", "raw_clipped.nc")
 
-  if(!is.null(date_range)){
-  	min_date <- lubridate::dmy(date_range[1])
-  	max_date <- lubridate::dmy(date_range[2])
-
-  	if(is.na(min_date) | is.na(max_date))
-  		stop("error check date range supplied")
-
-
-  	system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
-  	file.rename("dummy.nc", "raw_clipped.nc")
-  }
-
-
-  if(!is.null(months)){
-  	file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
-  		stringr::str_split(" ") %>%
-  		.[[1]] %>%
-  		as.integer()
-  	num_months <- 0
-  	for(mm in months){
-  		if(mm %in%unique(file_months[complete.cases(file_months)]))
-  			num_months <- num_months + 1
-  	}
-
-  	if(num_months == 0)
-  		stop("error: check months supplied")
-
-  	system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
-  	file.rename("dummy.nc", "raw_clipped.nc")
-  }
-
-  if(!is.null(years)){
-  	file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
-  		stringr::str_split(" ") %>%
-  		.[[1]] %>%
-  		as.integer()
-  	num_years <- 0
-  	for(yy in years){
-  		if(yy %in%unique(file_years[complete.cases(file_years)]))
-  			num_years <- num_years + 1
-  	}
-
-  	if(num_years == 0)
-  		stop("error: check years supplied")
-  	system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
-  	file.rename("dummy.nc", "raw_clipped.nc")
+  # clip the file
+  if (length(list(...)) >= 1) {
+    nc_clip("raw_clipped.nc", ..., out_file = "dummy.nc")
+    file.rename("dummy.nc", "raw_clipped.nc")
   }
 
   system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
@@ -204,9 +127,14 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
   if (is.null(out_file)) {
     nc_grid <- nc_read("raw_clipped.nc")
+    # remove the files that have been generated
+    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+    file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
+    file.remove(stringr::str_c(temp_dir, "/mygrid"))
+
     return(nc_grid)
   }
-
 
   # save the file, if that's what you chose to do
   # change the working directory back to the original
@@ -215,4 +143,3 @@ nc_remap <- function(ff, vars = NULL, lon_range, lat_range, coord_res,date_range
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
-
