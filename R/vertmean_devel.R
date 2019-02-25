@@ -9,9 +9,11 @@
 #' @param ff This is the file to analyze.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param vert_scale This is the vertical scale you want. c(min_depth, max_depth, vertical_resolution).
+#' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.
+#' @param ... Additional terms to be sent to nc_remap2
 #' @return data frame or netcdf file.
 #' @export
 
@@ -26,7 +28,7 @@
 
 
 #'
-nc_vertmean2 <- function(ff, vars = NULL, vert_scale = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
+nc_vertmean2 <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
 
 	# check that the vars given are actually in the file
 	if(!is.null(vars)){
@@ -108,8 +110,8 @@ nc_vertmean2 <- function(ff, vars = NULL, vert_scale = NULL, na_value = NULL, ou
 
   remap_run <- FALSE
 
-  if (length(list(...)) >= 1) {
-  	nc_remap2("raw.nc", vars = vars, cdo_output = TRUE, ..., out_file = "dummy.nc", na_value = na_value)
+  if (length(list(...)) >= 1 | !is.null(coords)) {
+  	nc_remap2("raw.nc", vars = vars, cdo_output = TRUE, coords = coords, ..., out_file = "dummy.nc", na_value = na_value)
     file.rename("dummy.nc", "raw.nc")
     remap_run <- TRUE
   }
