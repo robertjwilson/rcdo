@@ -43,15 +43,6 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
       }
     }
   }
-
-  if (!cdo_compatible(ff)) {
-    stop("error: file is not cdo compatible")
-  }
-
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
-    warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
-  }
-
   if (remapping %nin% c("bil", "dis", "nn")) {
     stop(stringr::str_glue("remapping method {remapping} is invalid"))
   }
@@ -71,6 +62,16 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
 
   if (getwd() == init_dir) {
     stop("error: there was a problem changing the directory")
+  }
+
+  # check if the raw file is compatible with cdo. If not, just regrid it
+
+  add_missing_grid("raw.nc", vars)
+
+  # check the the number of grids..
+
+  if (as.integer(system(stringr::str_c("cdo ngrids ", "raw.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
+    warning("warning: there is more than one horizontal grid in the netcdf file.  Please check the outputs")
   }
 
   # Generate mygrid for remapping
@@ -103,6 +104,7 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
   system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
   system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
+
 
   # at this stage, we need to output a data frame if asked
 
