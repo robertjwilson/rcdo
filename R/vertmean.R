@@ -30,7 +30,7 @@
 #'
 nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
 
-	nc_vertstat(metric = "median", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output,  ...)
+	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output,  ...)
 
 }
 
