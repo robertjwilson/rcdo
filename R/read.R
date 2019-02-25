@@ -44,9 +44,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 	if(!file_valid(ff))
 		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
 
-  if (!cdo_compatible(ff)) {
-    stop("error: file is not cdo compatible")
-  }
+
 	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = TRUE)) > 1)
 		warning("warning: there is more than one horizontal grid in the netcdf file. Please check output for errors!")
 
@@ -79,6 +77,19 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   # copy the file to the temporary folder
 
   ff <- "raw.nc"
+
+  # If the file is not cdo compatible, we'll need to attempt to add coordinate variables...
+
+  if (!cdo_compatible(ff)) {
+
+  	add_missing_grid(ff, vars = vars)
+
+  }
+
+  	# If this does not make the file cdo compatible, then we need to throw an error
+
+  	if(!cdo_compatible("raw.nc"))
+  		stop("error: file is not cdo compatible, even after trying to fix the coordinates")
 
   grid_details <- system(stringr::str_c("cdo griddes ", ff), intern = TRUE, ignore.stderr = TRUE)
 
