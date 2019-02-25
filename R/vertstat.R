@@ -131,9 +131,11 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   max_depths <- max_depths %>%
   	dplyr::group_by(Longitude, Latitude) %>%
-  	dplyr::summarize(Maximum_Depth = max(Depth)) %>%
+  	dplyr::summarize(Maximum_Depth = max(Depth), Minimum_Depth = min(Depth)) %>%
   	dplyr::ungroup() %>%
-  	dplyr::select(Longitude, Latitude, Maximum_Depth)
+  	dplyr::select(Longitude, Latitude, Minimum_Depth, Maximum_Depth)
+
+
 
   system(stringr::str_glue("cdo vert{metric} raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
