@@ -13,7 +13,7 @@
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.
-#' @param ... Additional terms to be sent to nc_remap2
+#' @param ... Additional terms to be sent to nc_remap
 #' @return data frame or netcdf file.
 #' @export
 
@@ -111,7 +111,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   remap_run <- FALSE
 
   if (length(list(...)) >= 1 | !is.null(coords)) {
-  	nc_remap2("raw.nc", vars = vars, cdo_output = TRUE, coords = coords, ..., out_file = "dummy.nc", na_value = na_value)
+  	nc_remap("raw.nc", vars = vars, cdo_output = TRUE, coords = coords, ..., out_file = "dummy.nc", na_value = na_value)
     file.rename("dummy.nc", "raw.nc")
     remap_run <- TRUE
   }
@@ -120,7 +120,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   add_missing_grid("raw.nc", vars)
 
   # Now, we need to select the variables we are interested in
-  # This only needs to happen when nc_remap2 has not been run
+  # This only needs to happen when nc_remap has not been run
   if(remap_run == FALSE){
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
