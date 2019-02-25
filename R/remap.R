@@ -5,7 +5,7 @@
 
 
 
-#' @title remap a ncdf file (development version)
+#' @title remap a ncdf file
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 #' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
