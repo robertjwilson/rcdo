@@ -129,7 +129,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     nc_grid <- nc_read("raw_clipped.nc")
     # remove the files that have been generated
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+    # file.remove(stringr::str_c(temp_dir, "/raw.nc"))
     file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
     file.remove(stringr::str_c(temp_dir, "/mygrid"))
 
