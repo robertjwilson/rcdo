@@ -185,6 +185,9 @@ random_temp <- function(){
 
 add_missing_grid <- function(ff, vars = NULL) {
 
+	if(is.null(vars))
+		vars <- nc_variables(ff)
+
 	grid_details <- system(stringr::str_c("cdo griddes ", ff), intern = TRUE, ignore.stderr = TRUE)
 
 	grid_details <- grid_details %>%
@@ -254,5 +257,62 @@ add_missing_grid <- function(ff, vars = NULL) {
 	vars_2grid <- stringr::str_flatten(vars_2grid, collapse =  " ")
 
 	warning(stringr::str_glue("The raw file does not have a grid type cdo can work with. Grid information has been added for variables {vars_2grid}. Please check output!"))
+
+}
+
+
+# function to check the validity of the vars.
+# Currently this checks to make sure the number of data points in the netcdf is the same for all variables listed.
+# It possibly needs to be more sophisticated to make sure the variables give genuine spatial data sets.
+
+var_validity <- function(ff, vars){
+
+
+	nc_summary <- system(str_glue("cdo sinfon {ff}"), intern = TRUE, ignore.stderr = TRUE) %>%
+		tibble::enframe(name = NULL)
+
+	summary_end <- nc_summary %>%
+		mutate(Row = row_number()) %>%
+		filter(str_detect(value, "Grid coordinates ")) %>%
+		slice(1) %>%
+		mutate(Row = Row - 1) %>%
+		pull(Row)
+
+	nc_summary <- nc_summary %>%
+		dplyr::slice(2:summary_end)
+
+	nc_summary <- nc_summary %>%
+		mutate(value = str_replace_all(value, ":", "")) %>%
+		mutate(value = str_replace(value, "Parameter name", "Parameter")) %>%
+		mutate(value = trimws(value)) %>%
+		mutate(value = str_replace_all(value, "  ", " "))
+
+	nc_summary_names <- str_split(nc_summary$value[1], " ") %>%
+		.[[1]]
+	nc_summary_names <- nc_summary_names[nc_summary_names != ""]
+	nc_summary <- nc_summary[2:nrow(nc_summary),]
+	nc_summary %>%
+		write.table("test.txt", row.names = FALSE, col.names = FALSE, quote = FALSE)
+	new_summary <- read.table("test.txt")
+	names(new_summary) <- nc_summary_names
+	new_summary
+
+
+
+	# OK. Parameters and points need to be the same......
+
+
+	par_check <- tibble(Parameter = new_summary$Parameter, Points = new_summary$Points) %>%
+		mutate(Parameter = as.character(Parameter)) %>%
+		filter(Parameter %in% vars) %>%
+		select(Points) %>%
+		distinct() %>%
+		nrow()
+
+	if(par_check > 1)
+		stop("error: please check vars selected. Not all have the same number of points in the netcdf file")
+
+
+
 
 }
