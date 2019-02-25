@@ -256,6 +256,9 @@ add_missing_grid <- function(ff, vars = NULL) {
 	file.rename("dummy.nc", "raw.nc")
 	vars_2grid <- stringr::str_flatten(vars_2grid, collapse =  " ")
 
+
+	## add something to say what grid type it now is
+
 	warning(stringr::str_glue("The raw file does not have a grid type cdo can work with. Grid information has been added for variables {vars_2grid}. Please check output!"))
 
 }
