@@ -30,7 +30,7 @@
 #'
 nc_vertsum <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
 
-	nc_vertstat(metric = "sum", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_outpu,  ...)
+	nc_vertstat(metric = "sum", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output,  ...)
 
 
 }
