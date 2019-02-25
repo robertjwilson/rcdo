@@ -129,7 +129,7 @@ nc_vertmean2 <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_v
 
   # set the missing value, if it has not been set already
   if(!is.null(na_value)){
-  system(str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+  system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
   file.rename("dummy.nc", "raw.nc")
   }
   }

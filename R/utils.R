@@ -252,7 +252,7 @@ add_missing_grid <- function(ff, vars = NULL) {
 	file.rename("dummy.nc", ff)
 
 
-	system(str_glue("cdo setattribute,FILE=myattributes.txt {ff} dummy.nc"))
+	system(stringr::str_glue("cdo setattribute,FILE=myattributes.txt {ff} dummy.nc"))
 	file.rename("dummy.nc", ff)
 	vars_2grid <- stringr::str_flatten(vars_2grid, collapse =  " ")
 
@@ -271,7 +271,7 @@ add_missing_grid <- function(ff, vars = NULL) {
 var_validity <- function(ff, vars){
 
 
-	nc_summary <- system(str_glue("cdo sinfon {ff}"), intern = TRUE, ignore.stderr = TRUE) %>%
+	nc_summary <- system(stringr::str_glue("cdo sinfon {ff}"), intern = TRUE, ignore.stderr = TRUE) %>%
 		tibble::enframe(name = NULL)
 
 	summary_end <- nc_summary %>%
