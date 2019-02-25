@@ -12,6 +12,7 @@
 #' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
+#' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.
 #' @return data frame or netcdf file.
@@ -29,7 +30,7 @@
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
-nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", ...) {
+nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, ...) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -67,6 +68,14 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
   # check if the raw file is compatible with cdo. If not, just regrid it
 
   add_missing_grid("raw.nc", vars)
+
+
+  # set the missing value, if it has not been set already
+  if(!is.null(na_value)){
+  	system(str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+  	file.rename("dummy.nc", "raw.nc")
+  }
+
 
   # check the the number of grids..
 
