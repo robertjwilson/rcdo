@@ -188,7 +188,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
           1,
           function(x) return(nc_grid)
         )) %>%
-        unnest()
+        tidyr::unnest()
     }
   }
 
