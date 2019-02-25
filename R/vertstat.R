@@ -1,6 +1,5 @@
 
 
-#'
 nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
 
 	# check that the vars given are actually in the file
