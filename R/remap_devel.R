@@ -1,8 +1,8 @@
 
 # to be added: year range options
 # figure out how to handle very large files. Use gebco bath
+# add a check whether there are any vertical depths in the file
 
-# think about whether multiple grids should throw a warning or error
 
 
 #' @title remap a ncdf file (development version)
@@ -13,7 +13,7 @@
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param cdo_output set to TRUE if you want to see the cdo output
-#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to processing.
+#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.
 #' @return data frame or netcdf file.
 #' @export
 
@@ -74,11 +74,20 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
     warning("warning: there is more than one horizontal grid in the netcdf file.  Please check the outputs")
   }
 
-  # Generate mygrid for remapping
 
+  # Generate mygrid for remapping
   generate_grid(coords)
 
-  # ad the variables we need to add attributes for
+
+  # to be added
+  # check the validity of the variables selected
+
+  # if(!is.null(vars))
+  # 	var_validity("raw.nc", vars)
+  #
+  # if(is.null(vars))
+  # 	var_validity("raw.nc", nc_variables("raw.nc"))
+
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
@@ -105,7 +114,6 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
   system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
 
-
   # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
@@ -126,20 +134,3 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
 }
-
-# library(rcdo)
-#
-# source("~/Dropbox/rcdo/R/utils.R")
-#
-# # Remapping NOAA world ocean atlas data to the region around the UK
-# ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-# # remapping to 1 degree resolution across all depth layers
-# uk_coords <- expand.grid(Longitude = seq(-60, 10, 1), Latitude = seq(48, 62, 1))
-# nc_remap2(ff, vars = "t_an", coords = uk_coords)
-#
-# library(tidyverse)
-# # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
-# nc_remap2(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5)) %>%
-#   drop_na() %>%
-#   ggplot(aes(Longitude, Latitude, colour = t_an)) +
-#   geom_point()
