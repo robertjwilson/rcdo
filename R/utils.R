@@ -248,12 +248,12 @@ add_missing_grid <- function(ff, vars = NULL) {
 	# This may still not be general to all generic grid netcdf files.
 
 	sel_names <- stringr::str_flatten(c(vars, long_use, lat_use), collapse = ",")
-	system(stringr::str_c("cdo selname,", stringr::str_flatten(sel_names, ","), " raw.nc dummy.nc"))
-	file.rename("dummy.nc", "raw.nc")
+	system(stringr::str_c("cdo selname,", stringr::str_flatten(sel_names, ","), " ", ff, " dummy.nc"))
+	file.rename("dummy.nc", ff)
 
 
-	system("cdo setattribute,FILE=myattributes.txt raw.nc dummy.nc")
-	file.rename("dummy.nc", "raw.nc")
+	system(str_glue("cdo setattribute,FILE=myattributes.txt {ff} dummy.nc"))
+	file.rename("dummy.nc", ff)
 	vars_2grid <- stringr::str_flatten(vars_2grid, collapse =  " ")
 
 
