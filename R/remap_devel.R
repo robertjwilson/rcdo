@@ -53,7 +53,7 @@ nc_remap2 <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fi
   on.exit(setwd(init_dir))
 
   # Create a temporary directory and move the file we are manipulating to it...
-  temp_dir <- tempdir()
+  temp_dir <- random_temp()
 
   # copy the file to the temporary
 
