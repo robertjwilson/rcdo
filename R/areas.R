@@ -23,7 +23,7 @@ nc_cellareas <- function(ff,  cdo_output = FALSE) {
 	if(!cdo_compatible(ff))
 		stop("error: file is not cdo compatible")
 
-		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1)
+		if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE)    )) > 1)
 			warning("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
 
   init_dir <- getwd()
@@ -42,7 +42,12 @@ nc_cellareas <- function(ff,  cdo_output = FALSE) {
   	stop("error: there was a problem changing the directory")
 
   # use gridarea to calculate the grid cell area
-  system("cdo gridarea raw.nc grid_area.nc", ignore.stderr = (cdo_output == FALSE))
+ if(file.exists("grid_area.nc"))
+  file.remove("grid_area.nc")
+
+ system("cdo gridarea raw.nc grid_area.nc", ignore.stderr = (cdo_output == FALSE))
+ if(!file.exists("grid_area.nc"))
+ 	stop("error: grid areas could not be calculated. Please check cdo output by setting cdo_output = TRUE!")
 
   # read the grid cell areas to a data frame
    nc_read("grid_area.nc", cdo_output = cdo_output)
