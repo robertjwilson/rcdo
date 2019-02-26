@@ -85,7 +85,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
 
   # Generate mygrid for remapping
-  generate_grid(coords)
+  if(!is.null(coords))
+  	generate_grid(coords)
 
 
   # to be added
@@ -119,9 +120,11 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
-  system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
-  system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-  file.rename("dummy.nc", "raw_clipped.nc")
+  if(!is.null(coords)){
+  	system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
+  	system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  	file.rename("dummy.nc", "raw_clipped.nc")
+  }
 
   # at this stage, we need to output a data frame if asked
 
