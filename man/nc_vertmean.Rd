@@ -2,43 +2,33 @@
 % Please edit documentation in R/vertmean.R
 \name{nc_vertmean}
 \alias{nc_vertmean}
-\title{Calculate vertical means from a netcdf file.}
+\title{Calculate vertical mean from a netcdf file.}
 \usage{
-nc_vertmean(ff, vars = NULL, lon_range = NULL, lat_range = NULL,
-  coord_res = NULL, date_range = NULL, months = NULL, years = NULL,
-  out_file = NULL, vert_scale = NULL, remapping = "bil",
-  cdo_output = FALSE)
+nc_vertmean(ff, vars = NULL, vert_scale = NULL, coords = NULL,
+  na_value = NULL, out_file = NULL, cdo_output = FALSE, ...)
 }
 \arguments{
 \item{ff}{This is the file to analyze.}
 
 \item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
 
-\item{lon_range}{longitude range. c(min_longituse, max_longitude).}
+\item{vert_scale}{This is the vertical scale you want. c(min_depth, max_depth, vertical_resolution).}
 
-\item{lat_range}{latitude range. c(min_latitude, max_latitude).}
+\item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
 
-\item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.}
-
-\item{months}{Months you want. c(month_1, month_2,...)}
-
-\item{years}{Months you want. c(year_1, year_2,...)}
+\item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
-\item{vert_scale}{This is the vertical scale you want. c(min_depth, max_depth, cell size).}
-
-\item{remapping}{The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.}
-
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
-\item{coord_rds}{longitudinal and latitudinal range for the regridding. c(lon_res, lat_res).}
+\item{...}{Additional terms to be sent to nc_remap2}
 }
 \value{
 data frame or netcdf file.
 }
 \description{
-This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the depth averaged value and the maximum depth used for the calculation.
+This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the mean value and the maximum depth used for the calculation.
 }
 \examples{
 # Calculating vertical mean NOAA world ocean atlas data to the region around the UK
