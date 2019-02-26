@@ -4,32 +4,26 @@
 \alias{nc_remap}
 \title{remap a ncdf file}
 \usage{
-nc_remap(ff, vars = NULL, lon_range, lat_range, coord_res,
-  date_range = NULL, months = NULL, years = NULL, out_file = NULL,
-  vert_depths = NULL, remapping = "bil", cdo_output = FALSE)
+nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
+  out_file = NULL, cdo_output = FALSE, remapping = "bil",
+  na_value = NULL, ...)
 }
 \arguments{
-\item{ff}{This is the file to remap.}
+\item{ff}{This is the file to regrid.}
 
 \item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
 
-\item{lon_range}{longitude range. c(min_longituse, max_longitude).}
-
-\item{lat_range}{latitude range. c(min_latitude, max_latitude).}
-
-\item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.}
-
-\item{months}{Months you want. c(month_1, month_2,...)}
-
-\item{years}{Months you want. c(year_1, year_2,...)}
+\item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
-\item{remapping}{The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.}
-
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
-\item{coord_rds}{longitudinal and latitudinal range for the regridding. c(lon_res, lat_res). If one number given the lon_res and lat_res will be the same.}
+\item{remapping}{The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.}
+
+\item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.#'}
+
+\item{...}{optional arguments to be sent to nc_clip if you need to clip prior to remapping.}
 }
 \value{
 data frame or netcdf file.
@@ -38,11 +32,13 @@ data frame or netcdf file.
 This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 }
 \examples{
+
 # Remapping NOAA world ocean atlas data to the region around the UK
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 # remapping to 1 degree resolution across all depth layers
-nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), coord_res = 1)
-# remapping to 1 degree resolution for 5, 50 and 100 metres
-nc_remap(ff, vars = "t_an", lon_range = c(-20, 10), lat_range = c(48,62), vert_depths= c(5, 50, 100), coord_res = 1)
+uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+nc_remap(ff, vars = "t_an", coords = uk_coords)
 
+# remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
+nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 }
