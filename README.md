@@ -83,7 +83,7 @@ ggplot()+
     geom_raster(data = uk_temp, aes(Longitude, Latitude, fill = t_an))+
     geom_polygon(data = world_map, aes(long, lat, group = group))+
     coord_equal(xlim = c(-20, 10), ylim = c(48,62))+
-    facet_wrap(~Depth)+
+    facet_wrap(~Depth, nrow = 2)+
     scale_fill_viridis_c()
 ```
 
