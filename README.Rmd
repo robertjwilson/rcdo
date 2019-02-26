@@ -1,0 +1,108 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# rcdo - easy tools for manipulating netcdf data in R.
+
+The goal of rcdo is to provide an easy to use interface to the command line tool data operators.
+
+## Installation
+
+You can install the development version of rcdo using.
+
+``` r
+# install.packages("devtools")
+devtools::install_github("r4ecology/rcdo", dependencies = TRUE)
+```
+
+You will need to have Climate Data Operators installed to run rcdo. Visit https://code.mpimet.mpg.de/projects/cdo/files for download and installation instructions.
+
+Currently, the package has been tested for Linux computers. It will not work on Windows platforms, currently. But (buyer beware) it probably should work on Macs.
+
+
+
+
+## Basic usage
+
+### Reading netcdf files
+
+This package will let you read a netcdf file directly into a data frame. Here we will work with January ocean temperature data from [NOAA's World Ocean Atlas 2017](https://www.nodc.noaa.gov/OC5/woa18/) that has been clipped to the North Atlantic.
+
+```{r}
+library(rcdo)
+# Calculating vertical mean NOAA world ocean atlas data to the region around the UK
+ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+# read all data into a data frame
+nc_read(ff)
+
+# Only read the averaged temperature field into a data frame
+nc_read(ff, vars = "t_an")
+```
+
+
+### Regridding netcdf files
+
+You can easily regridd netcf files, both horizontally and vertically using nc_remap. This function can take a set of horizontal coordinates and vertical depth layers and regrid the netcf files to those.
+
+
+```{r}
+library(rcdo)
+library(ggplot2)
+# Regridding NOAA temperature data to a depth of 5 and 30 metres in the waters around the UK
+ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+# read all data into a data frame
+uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+uk_temp <- nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 30))
+
+world_map <- map_data("world")
+ggplot()+
+	geom_raster(data = uk_temp, aes(Longitude, Latitude, fill = t_an))+
+	geom_polygon(data = world_map, aes(long, lat, group = group))+
+	coord_equal(xlim = c(-20, 10), ylim = c(48,62))+
+	facet_wrap(~Depth)+
+	scale_fill_viridis_c()
+
+```
+
+
+
+
+### Vertical statistics
+
+Two functions, nc_vertmean and nc_vertsum, are provided for calculating vertical statistics from netcf data. They both call nc_remap, so all you to calculate the vertical statistics for any remapped grid. 
+
+The vertical statistic is calculated by carrying out an interpolated vertical profile of the parameter between a minimum and maximum depth, with consistent steps. You therefore must supply a field vert_scale, with the minimum depth, maximum depth and steps being the arguments.
+
+The code below calculates the mean temperature in the top 30 metres in waters around the UK using the NOAA sample file.
+
+```{r}
+library(rcdo)
+library(ggplot2)
+# Calculating a vertical NOAA temperature data to a depth of 5 and 30 metres in the waters around the UK
+ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
+# read all data into a data frame
+uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+uk_temp <- nc_vertmean(ff, vars = "t_an", vert_scale = c(0, 30, 1))
+
+world_map <- map_data("world")
+ggplot()+
+	geom_raster(data = uk_temp, aes(Longitude, Latitude, fill = t_an))+
+	geom_polygon(data = world_map, aes(long, lat, group = group))+
+	coord_equal(xlim = c(-20, 10), ylim = c(48,62))+
+	scale_fill_viridis_c()
+
+```
+
+
+
