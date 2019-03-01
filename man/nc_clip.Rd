@@ -6,7 +6,8 @@
 \usage{
 nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
   90), vert_range = NULL, date_range = NULL, months = NULL,
-  years = NULL, out_file = NULL, cdo_output = FALSE)
+  years = NULL, out_file = NULL, cdo_output = FALSE,
+  overwrite = FALSE)
 }
 \arguments{
 \item{ff}{This is the file to clip.}
@@ -28,6 +29,11 @@ nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
+
+\item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
+}
+\value{
+data frame or netcdf file.
 }
 \description{
 Clip a netcdf file to a specific latlon box

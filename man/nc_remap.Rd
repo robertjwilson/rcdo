@@ -6,7 +6,7 @@
 \usage{
 nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
   out_file = NULL, cdo_output = FALSE, remapping = "bil",
-  na_value = NULL, ...)
+  na_value = NULL, overwrite = FALSE, ...)
 }
 \arguments{
 \item{ff}{This is the file to regrid.}
@@ -23,13 +23,15 @@ nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
 
 \item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.#'}
 
-\item{...}{optional arguments to be sent to nc_clip if you need to clip prior to remapping.}
+\item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
+
+\item{...}{optional arguments to be sent to nc_clip if you need to clip prior to remapping.#'}
 }
 \value{
 data frame or netcdf file.
 }
 \description{
-This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+This function allows you to remap a netcdf horizontally and vertically to any set of latlon coordinates.
 }
 \examples{
 

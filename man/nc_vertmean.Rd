@@ -5,7 +5,8 @@
 \title{Calculate vertical mean from a netcdf file.}
 \usage{
 nc_vertmean(ff, vars = NULL, vert_scale = NULL, coords = NULL,
-  na_value = NULL, out_file = NULL, cdo_output = FALSE, ...)
+  na_value = NULL, out_file = NULL, cdo_output = FALSE,
+  overwrite = FALSE, ...)
 }
 \arguments{
 \item{ff}{This is the file to analyze.}
@@ -21,6 +22,8 @@ nc_vertmean(ff, vars = NULL, vert_scale = NULL, coords = NULL,
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
+
+\item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
 
 \item{...}{Additional terms to be sent to nc_remap2}
 }
