@@ -2,7 +2,7 @@
 % Please edit documentation in R/merge.R
 \name{nc_merge}
 \alias{nc_merge}
-\title{remap a ncdf file}
+\title{merge netcdf files}
 \usage{
 nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
   cdo_output = TRUE, overwrite = FALSE)

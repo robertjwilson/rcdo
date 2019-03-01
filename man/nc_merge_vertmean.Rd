@@ -2,7 +2,7 @@
 % Please edit documentation in R/merge_vertmean.R
 \name{nc_merge_vertmean}
 \alias{nc_merge_vertmean}
-\title{remap a ncdf file}
+\title{merge and calculate the vertical means for a list of ncdf files}
 \usage{
 nc_merge_vertmean(ff_list, vars = NULL, coords, vert_scale,
   merge = "merge", expr = NULL, remap_point = "pre",

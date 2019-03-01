@@ -2,7 +2,7 @@
 % Please edit documentation in R/merge_remap.R
 \name{nc_merge_remap}
 \alias{nc_merge_remap}
-\title{remap a ncdf file}
+\title{merge and remap a list of ncdf files}
 \usage{
 nc_merge_remap(ff_list, merge = "merge", expr = NULL,
   remap_point = "pre", ..., out_file = NULL, cdo_output = TRUE,
