@@ -6,7 +6,7 @@
 
 
 #' @title remap a ncdf file
-#' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+#' @description This function allows you to remap a netcdf horizontally and vertically to any set of latlon coordinates.
 #' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
