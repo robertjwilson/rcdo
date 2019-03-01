@@ -14,7 +14,8 @@
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
 #' @param cdo_output set to TRUE if you want to see the cdo output
-#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.
+#' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
+#' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.#'
 #' @return data frame or netcdf file.
 #' @export
 
@@ -30,7 +31,7 @@
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
-nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, ...) {
+nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -144,5 +145,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   setwd(init_dir)
 
-  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
+  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
+
+  if(file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc")))
+  	file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
 }
