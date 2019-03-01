@@ -1,7 +1,7 @@
 
 # function to merge and remap a list of netcdf files
 
-#' @title remap a ncdf file
+#' @title merge netcdf files
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 #' @param ff_list This is a list of files to merge
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
