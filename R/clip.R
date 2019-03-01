@@ -17,6 +17,7 @@
 #' @param years Months you want. c(year_1, year_2,...)
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
+#' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @export
 
 # need an option for cacheing results...
@@ -35,7 +36,7 @@
 
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 
-nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE) {
+nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL,  cdo_output = FALSE, overwrite = FALSE) {
 
 	# check that the vars given are actually in the file
 	if(!is.null(vars)){
@@ -210,8 +211,11 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
     # change the working directory back to the original
 
     setwd(init_dir)
-	file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
+  if(file.exists(stringr::str_c(temp_dir, "/raw.nc")))
+		file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+
+  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
+  file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
 }
 
 # ff <- "~/Dropbox/rcdo/inst/extdata/woa18_decav_t01_01.nc"
