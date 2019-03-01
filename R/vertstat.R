@@ -1,6 +1,6 @@
 
 
-nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
+nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
 
 	# check that the vars given are actually in the file
 	if(!is.null(vars)){
@@ -153,6 +153,10 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   # change the working directory back to the original
 
   setwd(init_dir)
-  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = TRUE)
+  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
+
+  if(file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc")))
+  	file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+
 }
 
