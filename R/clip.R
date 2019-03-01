@@ -18,6 +18,7 @@
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
+#' @return data frame or netcdf file.
 #' @export
 
 # need an option for cacheing results...
