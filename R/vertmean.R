@@ -13,6 +13,7 @@
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.
+#' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @param ... Additional terms to be sent to nc_remap2
 #' @return data frame or netcdf file.
 #' @export
@@ -28,9 +29,9 @@
 
 
 #'
-nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE,  ...) {
+nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
 
-	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output,  ...)
+	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output, overwrite = overwrite,  ...)
 
 }
 
