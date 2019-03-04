@@ -108,12 +108,19 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw.nc")
+    # throw error if selecting vars fails
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem subselecting vars from {ff}. Please consider setting cdo_output = TRUE and re-running")
   }
 
   if (!is.null(vert_depths)) {
     vert_depths <- stringr::str_flatten(vert_depths, ",")
 
     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    # throw error if vertical interpolation failed
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem vertically interpolating file. Please consider setting cdo_output = TRUE and re-running")
+
     file.rename("dummy.nc", "raw.nc")
   }
 
@@ -128,6 +135,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   if(!is.null(coords)){
   	system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
   	system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    # throw error if vertical interpolation failed
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem horizontally remapping data. Please consider setting cdo_output = TRUE and re-running")
   	file.rename("dummy.nc", "raw_clipped.nc")
   }
 
