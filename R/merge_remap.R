@@ -51,6 +51,13 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
     stop("error: there was a problem changing the directory")
   }
 
+  if (getwd() != temp_dir) {
+    stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
+
+
   # Now, we possibly need to remap the data pre-merging. Do this.
 
   if (length(list(...)) >= 1 & remap_point == "pre") {
