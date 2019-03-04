@@ -3,9 +3,9 @@
 
 #' @title merge and remap a list of ncdf files
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
-#' @param ff_list This is a list of files to merge
+#' @param ff_list This is a character vector of files to merge
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
-#' @param expr This is an expression to apply to the merged files.
+#' @param expr This is a cdo expression to apply to the merged files.
 #' @param remap_point This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.
 #' @param ... Arguments to be sent to nc_remap.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
