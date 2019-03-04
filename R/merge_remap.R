@@ -7,14 +7,14 @@
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
 #' @param expr This is a cdo expression to apply to the merged files.
 #' @param remap_point This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.
-#' @param ... Arguments to be sent to nc_remap.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
+#' @param ... Arguments to be sent to nc_remap.
 #' @return data frame or netcdf file.
 #' @export
 
-nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", ..., out_file = NULL, cdo_output = TRUE, overwrite = FALSE) {
+nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, cdo_output = TRUE, overwrite = FALSE, ...) {
   if (remap_point %nin% c("pre", "post")) {
     stop(stringr::str_glue("error: remap_point = {remap_point} is not valid"))
   }
