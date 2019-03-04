@@ -63,20 +63,24 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   setwd(temp_dir)
 
   if (getwd() == init_dir) {
-    stop("error: there was a problem changing the directory")
+  	stop("error: there was a problem changing the directory")
   }
+
+  if (getwd() == temp_dir) {
+  	stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
 
   # check if the raw file is compatible with cdo. If not, just regrid it
 
   add_missing_grid("raw.nc", vars)
-
 
   # set the missing value, if it has not been set already
   if(!is.null(na_value)){
   	system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
   	file.rename("dummy.nc", "raw.nc")
   }
-
 
   # check the the number of grids..
 
