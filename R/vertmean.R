@@ -11,6 +11,7 @@
 #' @param vert_scale This is the vertical scale you want. c(min_depth, max_depth, vertical_resolution).
 #' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
+#' @param expr This is a cdo expression to apply to the data before a vertical mean is calculated.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
@@ -29,9 +30,9 @@
 
 
 #'
-nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
+nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
 
-	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, na_value = na_value, out_file = out_file, cdo_output = cdo_output, overwrite = overwrite,  ...)
+	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, expr = expr, na_value = na_value, out_file = out_file, cdo_output = cdo_output, overwrite = overwrite,  ...)
 
 }
 
