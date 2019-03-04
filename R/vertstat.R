@@ -64,7 +64,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   	stop("error: there was a problem changing the directory")
   }
 
-  if (getwd() == temp_dir) {
+  if (getwd() != temp_dir) {
   	stop("error: there was a problem changing the directory")
   }
 

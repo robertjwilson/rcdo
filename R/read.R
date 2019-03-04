@@ -73,7 +73,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   	stop("error: there was a problem changing the directory")
   }
 
-  if (getwd() == temp_dir) {
+  if (getwd() != temp_dir) {
   	stop("error: there was a problem changing the directory")
   }
 

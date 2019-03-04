@@ -66,7 +66,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   	stop("error: there was a problem changing the directory")
   }
 
-  if (getwd() == temp_dir) {
+  if (getwd() != temp_dir) {
   	stop("error: there was a problem changing the directory")
   }
 

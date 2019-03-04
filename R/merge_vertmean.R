@@ -69,7 +69,7 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
     stop("error: there was a problem changing the directory")
   }
 
-  if (getwd() == temp_dir) {
+  if (getwd() != temp_dir) {
     stop("error: there was a problem changing the directory")
   }
 
