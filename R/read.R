@@ -69,6 +69,16 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 
   setwd(temp_dir)
 
+  if (getwd() == init_dir) {
+  	stop("error: there was a problem changing the directory")
+  }
+
+  if (getwd() == temp_dir) {
+  	stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
+
   if (file.exists("dummy.nc")) {
     file.remove("dummy.nc")
   }
