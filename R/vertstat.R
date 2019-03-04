@@ -1,6 +1,6 @@
 
 
-nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
+nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
 
 	# check that the vars given are actually in the file
 	if(!is.null(vars)){
@@ -43,14 +43,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
-
-  # to be safe, if the working directory is the CAO one, switch it to the home directory at this point
-
-  setwd("~")
-
-  if (!file.exists(ff)) {
-    stop(stringr::str_glue("File {ff} either does not exist or does not have the full path"))
-  }
 
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- random_temp()
@@ -137,6 +129,13 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   	dplyr::summarize(Maximum_Depth = max(Depth), Minimum_Depth = min(Depth)) %>%
   	dplyr::ungroup() %>%
   	dplyr::select(Longitude, Latitude, Minimum_Depth, Maximum_Depth)
+
+  if (!is.null(expr)) {
+  	expr <- stringr::str_replace_all(expr, " ", "")
+  	print(expr)
+  	system(stringr::str_glue("cdo aexpr,'{expr}' raw_clipped.nc dummy.nc"))
+  	file.rename("dummy.nc", "raw_clipped.nc")
+  }
 
   system(stringr::str_glue("cdo vert{metric} raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
