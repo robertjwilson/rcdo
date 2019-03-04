@@ -52,7 +52,6 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL,  out_file = NULL, cd
 
   temp_dir <- stringr::str_c(temp_dir, "/")
 
-
   # OK. We now need to merge the files...
 
   ens_string <- stringr::str_flatten(new_ens, collapse = " ")
