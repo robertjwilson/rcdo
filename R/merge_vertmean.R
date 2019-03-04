@@ -1,9 +1,9 @@
 
-# function to merge and calculate a vertical mean from a list of netcdf files
+# function to merge, remap and calculate a vertical mean from a list of netcdf files
 
 #' @title merge and calculate the vertical means for a list of ncdf files
 #' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
-#' @param ff_list This is a list of files to merge
+#' @param ff_list This is a character vector containing the files to merge
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
 #' @param vars The variables to select from the files for merging..
 #' @param coords A lonlat grid to regrid to. Longitude/Latitude columns. No horizontal mapping occurs if not supplied.
