@@ -17,7 +17,7 @@
 #' @return data frame or netcdf file.
 #' @export
 
-nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = "merge", expr = NULL, remap_point = "pre", na_value = NULL, out_file = NULL, cdo_output = TRUE, overwrite = FALSE) {
+nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, merge = "merge", expr = NULL, remap_point = "pre", na_value = NULL, out_file = NULL, cdo_output = TRUE, overwrite = FALSE) {
   if (remap_point %nin% c("pre", "post")) {
     stop(stringr::str_glue("error: remap_point = {remap_point} is not valid"))
   }
