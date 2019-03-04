@@ -3,7 +3,7 @@
 
 #' @title merge netcdf files
 #' @description This function allows you to merge a list of netcdf files
-#' @param ff_list This is a list of files to merge
+#' @param ff_list This is a character vector containing the files to merge
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
 #' @param expr This is a cdo expression to apply to the merged files.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
