@@ -20,7 +20,7 @@ nc_merge_vertmean(ff_list, vars = NULL, coords, vert_scale,
 
 \item{merge}{This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.}
 
-\item{expr}{This is an expression to apply to the merged files.}
+\item{expr}{This is a cdo expression to apply to the merged files.}
 
 \item{remap_point}{This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.}
 

@@ -5,8 +5,8 @@
 \title{Calculate vertical sum from a netcdf file.}
 \usage{
 nc_vertsum(ff, vars = NULL, vert_scale = NULL, coords = NULL,
-  na_value = NULL, out_file = NULL, cdo_output = FALSE,
-  overwrite = FALSE, ...)
+  expr = NULL, na_value = NULL, out_file = NULL,
+  cdo_output = FALSE, overwrite = FALSE, ...)
 }
 \arguments{
 \item{ff}{This is the file to analyze.}
@@ -16,6 +16,8 @@ nc_vertsum(ff, vars = NULL, vert_scale = NULL, coords = NULL,
 \item{vert_scale}{This is the vertical scale you want. c(min_depth, max_depth, vertical_resolution).}
 
 \item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
+
+\item{expr}{This is a cdo expression to apply to the data before a vertical sum is calculated.}
 
 \item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.}
 
