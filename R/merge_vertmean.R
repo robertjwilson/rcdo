@@ -8,7 +8,7 @@
 #' @param vars The variables to select from the files for merging..
 #' @param coords A lonlat grid to regrid to. Longitude/Latitude columns. No horizontal mapping occurs if not supplied.
 #' @param vert_scale This is the vertical scale you want. c(min_depth, max_depth, vertical_resolution).
-#' @param expr This is an expression to apply to the merged files.
+#' @param expr This is a cdo expression to apply to the merged files.
 #' @param remap_point This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
