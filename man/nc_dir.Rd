@@ -4,10 +4,14 @@
 \alias{nc_dir}
 \title{search netcdf files in folder and list variables in each file}
 \usage{
-nc_dir(directory = getwd(), var = NULL, recursive = TRUE)
+nc_dir(directory = getwd(), recursive = TRUE, print = FALSE)
 }
 \arguments{
 \item{directory}{This is the directory to check.}
+
+\item{recursive}{Do you want to recursive look through a directory?}
+
+\item{print}{Do you want to print the name of files as you check them?}
 }
 \value{
 data frame. First column is the file name. Remaining column are the variables, with TRUE signifying the variable is available in the file on that row.
