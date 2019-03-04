@@ -149,7 +149,7 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
   if (remapped == FALSE) {
     vert_seq <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
     vert_seq <- stringr::str_flatten(vert_seq, collapse = ",")
-    stringr::str_glue("cdo intlevel,{vert_seq} merged.nc dummy.nc")
+    system(stringr::str_glue("cdo intlevel,{vert_seq} merged.nc dummy.nc"))
     # throw error if vertical interpolation failed
     if(!file.exists("dummy.nc"))
     	stop("error: problem doing the vertical interpolation. Please consider setting cdo_output = TRUE and rerun")
