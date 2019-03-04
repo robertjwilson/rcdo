@@ -7,7 +7,7 @@
 #' @return data frame. First column is the file name. Remaining column are the variables, with TRUE signifying the variable is available in the file on that row.
 #' @export
 
-nc_dir <- function(directory = getwd(), var = NULL, recursive = TRUE) {
+nc_dir <- function(directory = getwd(), recursive = TRUE) {
 	setwd(directory)
 	on.exit(setwd(getwd()))
 
