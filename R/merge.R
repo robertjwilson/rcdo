@@ -59,6 +59,9 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL,  out_file = NULL, cd
 
   system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"))
 
+  if(!file.exists("merged.nc"))
+  	stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
+
   # we no longer need the ensemble files post-merging.
   # Delete them
 
