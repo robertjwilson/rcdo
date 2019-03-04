@@ -82,7 +82,7 @@ nc_gridsize <- function(ff, cdo_output = FALSE, date_range = NULL) {
   # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
   # this should be a valid assumption
 
-  if ("curvilinear" %nin% grid_type) {
+  if ("lonlat" %in% grid_type) {
     nc_grid <- eval(parse(text = stringr::str_c(
       "expand.grid(Longitude = nc_lon, Latitude = nc_lat",
       ")"
