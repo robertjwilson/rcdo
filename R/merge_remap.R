@@ -73,6 +73,11 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"))
 
+  # throw an error message if merging fails
+
+  if(!file.exists("merged.nc"))
+  	stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
+
   # we no longer need the ensemble files post-merging.
   # Delete them
 
@@ -85,6 +90,12 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
     expr <- stringr::str_replace_all(expr, " ", "")
     print(expr)
     system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
+
+  # throw an error message if apply expr fails
+
+  if(!file.exists("dummy.nc"))
+  	stop("error: problem applying expr to merged files. Please check expr and then consider setting cdo_output = TRUE and rerun")
+
     file.rename("dummy.nc", "merged.nc")
   }
 
