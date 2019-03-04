@@ -46,6 +46,13 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL,  out_file = NULL, cd
     stop("error: there was a problem changing the directory")
   }
 
+  if (getwd() != temp_dir) {
+    stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
+
+
   # OK. We now need to merge the files...
 
   ens_string <- stringr::str_flatten(new_ens, collapse = " ")
