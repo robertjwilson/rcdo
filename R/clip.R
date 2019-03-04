@@ -76,17 +76,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   init_dir <- getwd()
   on.exit(setwd(init_dir))
 
-  # to be safe, if the working directory is the CAO one, switch it to the home directory at this point
-#
-#   setwd("~")
-#
-#   if (!file.exists(ff)) {
-#     stop(stringr::str_glue("File {ff} either does not exist or does not have the full path"))
-#   }
-
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- random_temp()
-  dir.exists(temp_dir)
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
 
@@ -94,11 +85,14 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   if(getwd() == init_dir)
   	stop("error: there was a problem changing the directory")
 
+  if(getwd() != temp_dir)
+  	stop("error: there was a problem changing the directory")
+
+  # add "/" to the end of the temporary directory, for safety
+  temp_dir <- str_c(temp_dir, "/")
+
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  # if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-  #   file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  # }
   if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
