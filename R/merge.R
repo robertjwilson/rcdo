@@ -1,11 +1,11 @@
 
-# function to merge and remap a list of netcdf files
+# function to merge a list of netcdf files
 
 #' @title merge netcdf files
-#' @description This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+#' @description This function allows you to merge a list of netcdf files
 #' @param ff_list This is a list of files to merge
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
-#' @param expr This is an expression to apply to the merged files.
+#' @param expr This is a cdo expression to apply to the merged files.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
