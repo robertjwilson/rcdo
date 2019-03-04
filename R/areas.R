@@ -35,11 +35,15 @@ nc_cellareas <- function(ff,  cdo_output = FALSE) {
   # copy the file to the temporary
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
-  setwd("~")
   setwd(temp_dir)
 
   if(getwd() == init_dir)
   	stop("error: there was a problem changing the directory")
+
+  if(getwd() != temp_dir)
+  	stop("error: there was a problem changing the directory")
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
 
   # use gridarea to calculate the grid cell area
  if(file.exists("grid_area.nc"))
