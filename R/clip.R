@@ -89,7 +89,7 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   	stop("error: there was a problem changing the directory")
 
   # add "/" to the end of the temporary directory, for safety
-  temp_dir <- str_c(temp_dir, "/")
+  temp_dir <- stringr::str_c(temp_dir, "/")
 
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
