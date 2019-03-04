@@ -33,10 +33,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   vert_depths <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
 
-  # if (!cdo_compatible(ff)) {
-  #   stop("error: file is not cdo compatible")
-  # }
-
   if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1) {
     stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
   }
@@ -70,9 +66,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
-
-  # ad the variables we need to add attributes for
-
   # do the remapping
 
   remap_run <- FALSE
@@ -83,14 +76,13 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     remap_run <- TRUE
   }
 
-
   # add the missing grid information if it isn't already there
 
+  if(remap_run == FALSE){
   add_missing_grid("raw.nc", vars)
 
   # Now, we need to select the variables we are interested in
   # This only needs to happen when nc_remap has not been run
-  if(remap_run == FALSE){
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw.nc")
