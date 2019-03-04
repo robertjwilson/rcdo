@@ -69,6 +69,12 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
     stop("error: there was a problem changing the directory")
   }
 
+  if (getwd() == temp_dir) {
+    stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
+
   # Now, we possibly need to remap the data pre-merging. Do this.
 
   remapped <- FALSE
