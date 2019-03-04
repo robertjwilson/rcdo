@@ -74,9 +74,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  }
   if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
