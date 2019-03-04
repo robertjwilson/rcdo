@@ -85,21 +85,30 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   # This only needs to happen when nc_remap has not been run
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  	# throw error if subselecting vars failed
+  	if(!file.exists("dummy.nc"))
+  		stop("error: problem subselecting vars from file. Considering setting cdo_output=TRUE and rerunning")
     file.rename("dummy.nc", "raw.nc")
   }
 
   # set the missing value, if it has not been set already
   if(!is.null(na_value)){
   system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+  	# throw error if missing value could not be set
+  	if(!file.exists("dummy.nc"))
+  		stop("error: problem setting missing value. Considering setting cdo_output=TRUE and rerunning.")
+
   file.rename("dummy.nc", "raw.nc")
   }
   }
-
 
   if (!is.null(vert_depths)) {
     vert_depths <- stringr::str_flatten(vert_depths, ",")
 
     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  	# throw error if vertical interpolation failed.
+  	if(!file.exists("dummy.nc"))
+  		stop("error: problem carrying out vertical interpolation. Considering setting cdo_output=TRUE and rerunning.")
     file.rename("dummy.nc", "raw.nc")
   }
 
@@ -126,10 +135,16 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   	expr <- stringr::str_replace_all(expr, " ", "")
   	print(expr)
   	system(stringr::str_glue("cdo aexpr,'{expr}' raw_clipped.nc dummy.nc"))
+  	# throw error if expr application failed
+  	if(!file.exists("dummy.nc"))
+  		stop("error: problem applying expr. Considering setting cdo_output=TRUE and rerunning.")
   	file.rename("dummy.nc", "raw_clipped.nc")
   }
 
   system(stringr::str_glue("cdo vert{metric} raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  # throw error if calculationg of vertical mean failed
+  	if(!file.exists("dummy.nc"))
+  		stop("error: problem calculating vertical mean. Considering setting cdo_output=TRUE and rerunning.")
   file.rename("dummy.nc", "raw_clipped.nc")
 
   # at this stage, we need to output a data frame if asked
