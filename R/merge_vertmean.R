@@ -125,6 +125,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
     expr <- stringr::str_replace_all(expr, " ", "")
     print(expr)
     system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
+    # throw error if remapping fails
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem apply expr. Please check expr and consider setting cdo_output = TRUE and rerun")
     file.rename("dummy.nc", "merged.nc")
   }
 
@@ -132,6 +135,11 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
   if (remap_point == "post") {
     vert_seq <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
     nc_remap("merged.nc", out_file = "dummy.nc", coords = coords, vert_depths = )
+
+    # throw error if remapping fails
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem remapping merged files. Please consider setting cdo_output = TRUE and rerun")
+
     file.rename("dummy.nc", "merged.nc")
     remapped <- TRUE
   }
@@ -142,6 +150,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
     vert_seq <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
     vert_seq <- stringr::str_flatten(vert_seq, collapse = ",")
     stringr::str_glue("cdo intlevel,{vert_seq} merged.nc dummy.nc")
+    # throw error if vertical interpolation failed
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem doing the vertical interpolation. Please consider setting cdo_output = TRUE and rerun")
     file.rename("dummy.nc", "merged.nc")
   }
 
@@ -164,6 +175,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords, vert_scale, merge = 
     dplyr::select(Longitude, Latitude, Minimum_Depth, Maximum_Depth)
   # finally, do the vertical mean
   system("cdo vertmean merged.nc dummy.nc")
+    # throw error if vertical interpolation failed
+    if(!file.exists("dummy.nc"))
+    	stop("error: problem calculating the vertical mean. Please consider setting cdo_output = TRUE and rerun")
   file.rename("dummy.nc", "merged.nc")
 
   # read in the merged file to a data frame if there is no out_file
