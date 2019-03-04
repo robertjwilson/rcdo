@@ -97,6 +97,9 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
+  if (file.exists(stringr::str_c(temp_dir, "/dummy.nc"))) {
+    file.remove(stringr::str_c(temp_dir, "/dummy.nc"))
+  }
   # add missing grid info if it's coming in as generic or something cdo cannot handle.
 
 	 add_missing_grid("raw.nc", vars = vars)
@@ -111,6 +114,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect vars chosen. Set cdo_output = TRUE and inspect output.")
     file.rename("dummy.nc", "raw.nc")
   }
 
@@ -118,7 +123,9 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
   # if(is.null(vars))
   	system(stringr::str_c("cdo sellonlatbox,",stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
-  	# system(stringr::str_c("cdo -selname,", stringr::str_flatten(vars, ","), " -sellonlatbox,",stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
+ # throw an error if this did not work
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect the lonlat box. Set cdo_output = TRUE and inspect output.")
 
   file.rename("dummy.nc", "raw_clipped.nc")
 
@@ -140,6 +147,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
 
 
   	system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect the dates. Set cdo_output = TRUE and inspect output.")
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
@@ -150,6 +159,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   		stop("error: no depths within the depth range selected")
 
   	system(stringr::str_c("cdo sellevel,", stringr::str_flatten(depths, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect the vertical levels. Set cdo_output = TRUE and inspect output.")
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
@@ -168,6 +179,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   	stop("error: check months supplied")
 
   	system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect the months. Set cdo_output = TRUE and inspect output.")
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
@@ -185,6 +198,8 @@ nc_clip <-  function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-9
   	if(num_years == 0)
   		stop("error: check years supplied")
   	system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+  	if(!file.exists("dummy.nc"))
+  			stop("error: cdo cannot subselect the years. Set cdo_output = TRUE and inspect output.")
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
