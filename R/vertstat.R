@@ -55,11 +55,20 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- random_temp()
 
+  # copy the file to the temporary
+
+  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
   setwd(temp_dir)
 
-  if (getwd() != temp_dir) {
-    stop("error: unable to reset the working directory to a temporary folder, for whatever reason")
+  if (getwd() == init_dir) {
+  	stop("error: there was a problem changing the directory")
   }
+
+  if (getwd() == temp_dir) {
+  	stop("error: there was a problem changing the directory")
+  }
+
+  temp_dir <- stringr::str_c(temp_dir, "/")
 
   # we need to set up a grid so that cdo can do a remapping. Easy enough
 
@@ -72,9 +81,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
   }
 
-  # copy the file to the temporary
-
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"))
 
   # ad the variables we need to add attributes for
 
@@ -88,6 +94,8 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     remap_run <- TRUE
   }
 
+
+  # add the missing grid information if it isn't already there
 
   add_missing_grid("raw.nc", vars)
 
@@ -105,8 +113,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   file.rename("dummy.nc", "raw.nc")
   }
   }
-
-  # add the missing grid information if it isn't already there
 
 
   if (!is.null(vert_depths)) {
@@ -134,8 +140,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   	dplyr::summarize(Maximum_Depth = max(Depth), Minimum_Depth = min(Depth)) %>%
   	dplyr::ungroup() %>%
   	dplyr::select(Longitude, Latitude, Minimum_Depth, Maximum_Depth)
-
-
 
   system(stringr::str_glue("cdo vert{metric} raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   file.rename("dummy.nc", "raw_clipped.nc")
