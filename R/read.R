@@ -61,8 +61,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
-  temp_dir <- tempdir()
-  dir.exists(temp_dir)
+  temp_dir <- random_temp()
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
 
