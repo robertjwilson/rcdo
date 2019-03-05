@@ -211,11 +211,10 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
     }
   }
 
+  # if no vars are supplied, use the variables in the netcdf file
+
   if (is.null(vars)) {
-    vars <- system(stringr::str_glue("cdo showname {ff}"), intern = TRUE, ignore.stderr = TRUE)
-    vars <- stringr::str_split(vars, " ") %>%
-      .[[1]]
-    vars <- vars[nchar(vars) > 0]
+    vars <- nc_variables(ff)
   }
 
   for (vv in vars) {
