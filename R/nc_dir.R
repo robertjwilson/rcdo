@@ -10,34 +10,31 @@
 #' @export
 
 nc_dir <- function(directory = getwd(), recursive = TRUE, print = FALSE) {
-	setwd(directory)
-	on.exit(setwd(getwd()))
+  setwd(directory)
+  on.exit(setwd(getwd()))
 
 
-	all_files <- dir(directory, recursive = recursive) %>%
-		tibble::enframe(name = NULL)
+  all_files <- dir(directory, recursive = recursive) %>%
+    tibble::enframe(name = NULL)
 
-	get_vars <- function(ff){
-		if(print)
-			print(stringr::str_glue("getting variables from {ff}"))
-		nc_variables(ff)
+  get_vars <- function(ff) {
+    if (print) {
+      print(stringr::str_glue("getting variables from {ff}"))
+    }
+    nc_variables(ff)
+  }
 
-	}
+  all_vars <- all_files %>%
+    dplyr::mutate(variables = purrr::map(value, get_vars)) %>%
+    tidyr::unnest() %>%
+    dplyr::mutate(Exists = 1) %>%
+    tidyr::spread(variables, Exists) %>%
+    dplyr::rename(File = value)
 
-	all_vars <- all_files %>%
-		dplyr::mutate(variables = purrr::map(value, get_vars)) %>%
-		tidyr::unnest() %>%
-		dplyr::mutate(Exists = 1) %>%
-		tidyr::spread(variables, Exists) %>%
-		dplyr::rename(File = value)
+  tidy_result <- function(x) {
+    complete.cases(x)
+  }
 
-	tidy_result <- function(x){
-		complete.cases(x)
-	}
-
-	all_vars %>%
-		dplyr::mutate_at(2:ncol(.), tidy_result)
-
+  all_vars %>%
+    dplyr::mutate_at(2:ncol(.), tidy_result)
 }
-
-

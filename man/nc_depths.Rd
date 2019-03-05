@@ -13,8 +13,8 @@ nc_depths(ff)
 Find depths available in a netcdf file
 }
 \examples{
+
 # Get the depths in the sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_depths(ff)
-
 }

@@ -25,38 +25,38 @@
 #' @param dim_check The number of data points in the final data frame that will ask to continue. Set to NULL if you don't want to check.
 #' @export
 
-#'@examples
-
+#' @examples
+#' 
 #' # Reading in data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # if we simply want to read the data into a tibble, we just need to use nc_read
-
+#' 
 #' nc_read(ff)
-
+#' 
 #' # By default nc_read reads in all data fields. But we probably just want to subset it
 #' # If we only want to read in specific fields, we can use vars
-
+#' 
 #' nc_read(ff, vars = "t_an")
-
-
 nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
-
-	if(!file_valid(ff))
-		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
-
-
-	if(as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = TRUE)) > 1)
-		warning("warning: there is more than one horizontal grid in the netcdf file. Please check output for errors!")
+  if (!file_valid(ff)) {
+    stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+  }
 
 
-	# check that the vars given are actually in the file
-	if(!is.null(vars)){
-		var_list <- stringr::str_flatten(nc_variables(ff), collapse  = " ")
-		for(vv in vars){
-			if(vv %in% nc_variables(ff) == FALSE)
-				stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
-		}
-	}
+  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = TRUE)) > 1) {
+    warning("warning: there is more than one horizontal grid in the netcdf file. Please check output for errors!")
+  }
+
+
+  # check that the vars given are actually in the file
+  if (!is.null(vars)) {
+    var_list <- stringr::str_flatten(nc_variables(ff), collapse = " ")
+    for (vv in vars) {
+      if (vv %in% nc_variables(ff) == FALSE) {
+        stop(stringr::str_glue("variable {vv} does not appear to be in the file. Available variables are {var_list}"))
+      }
+    }
+  }
 
 
   init_dir <- getwd()
@@ -70,11 +70,11 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   setwd(temp_dir)
 
   if (getwd() == init_dir) {
-  	stop("error: there was a problem changing the directory")
+    stop("error: there was a problem changing the directory")
   }
 
   if (getwd() != temp_dir) {
-  	stop("error: there was a problem changing the directory")
+    stop("error: there was a problem changing the directory")
   }
 
   temp_dir <- stringr::str_c(temp_dir, "/")
@@ -90,15 +90,14 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   # If the file is not cdo compatible, we'll need to attempt to add coordinate variables...
 
   if (!cdo_compatible(ff)) {
-
-  	add_missing_grid(ff, vars = vars)
-
+    add_missing_grid(ff, vars = vars)
   }
 
-  	# If this does not make the file cdo compatible, then we need to throw an error
+  # If this does not make the file cdo compatible, then we need to throw an error
 
-  	if(!cdo_compatible("raw.nc"))
-  		stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+  if (!cdo_compatible("raw.nc")) {
+    stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+  }
 
   grid_details <- system(stringr::str_c("cdo griddes ", ff), intern = TRUE, ignore.stderr = TRUE)
 
@@ -181,8 +180,8 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
     )))
   } else {
 
-  	# right now, this is relatively simplistic. Only uses row numbers. Could be smarter....
-    if (dim_check < length(nc_lon)){
+    # right now, this is relatively simplistic. Only uses row numbers. Could be smarter....
+    if (dim_check < length(nc_lon)) {
       choice <- readline(prompt = "This file is potentially large. Do you want to continue? (y/n): ")
       print(choice)
       if (choice != "y") {

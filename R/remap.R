@@ -22,13 +22,13 @@
 # need an option for cacheing results...
 
 #' @examples
-#'
+#' 
 #' # Remapping NOAA world ocean atlas data to the region around the UK
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # remapping to 1 degree resolution across all depth layers
 #' uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
 #' nc_remap(ff, vars = "t_an", coords = uk_coords)
-#'
+#' 
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
@@ -63,11 +63,11 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   setwd(temp_dir)
 
   if (getwd() == init_dir) {
-  	stop("error: there was a problem changing the directory")
+    stop("error: there was a problem changing the directory")
   }
 
   if (getwd() != temp_dir) {
-  	stop("error: there was a problem changing the directory")
+    stop("error: there was a problem changing the directory")
   }
 
   temp_dir <- stringr::str_c(temp_dir, "/")
@@ -77,9 +77,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   add_missing_grid("raw.nc", vars)
 
   # set the missing value, if it has not been set already
-  if(!is.null(na_value)){
-  	system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
-  	file.rename("dummy.nc", "raw.nc")
+  if (!is.null(na_value)) {
+    system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+    file.rename("dummy.nc", "raw.nc")
   }
 
   # check the the number of grids..
@@ -90,8 +90,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
 
   # Generate mygrid for remapping
-  if(!is.null(coords))
-  	generate_grid(coords)
+  if (!is.null(coords)) {
+    generate_grid(coords)
+  }
 
 
   # to be added
@@ -108,8 +109,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   if (!is.null(vars)) {
     system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if selecting vars fails
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem subselecting vars from {ff}. Please consider setting cdo_output = TRUE and re-running")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem subselecting vars from {ff}. Please consider setting cdo_output = TRUE and re-running")
+    }
     file.rename("dummy.nc", "raw.nc")
   }
 
@@ -118,8 +120,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if vertical interpolation failed
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem vertically interpolating file. Please consider setting cdo_output = TRUE and re-running")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem vertically interpolating file. Please consider setting cdo_output = TRUE and re-running")
+    }
 
     file.rename("dummy.nc", "raw.nc")
   }
@@ -132,13 +135,14 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
-  if(!is.null(coords)){
-  	system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
-  	system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  if (!is.null(coords)) {
+    system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if vertical interpolation failed
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem horizontally remapping data. Please consider setting cdo_output = TRUE and re-running")
-  	file.rename("dummy.nc", "raw_clipped.nc")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem horizontally remapping data. Please consider setting cdo_output = TRUE and re-running")
+    }
+    file.rename("dummy.nc", "raw_clipped.nc")
   }
 
   # at this stage, we need to output a data frame if asked
@@ -161,6 +165,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
 
-  if(file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc")))
-  	file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+  if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
+    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+  }
 }

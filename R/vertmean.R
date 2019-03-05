@@ -21,18 +21,12 @@
 
 # need an option for cacheing results...
 
-#'@examples
-
+#' @examples
+#' 
 #' # Calculating vertical mean NOAA world ocean atlas data to the region around the UK
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # calculate vertical mean of temperature between 5 and 30 m, using a resolution of 5 for vertical interpolation
 #' nc_vertmean(ff, vars = "t_an", vert_scale = c(5, 30, 5))
-
-
-#'
-nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE,  ...) {
-
-	nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, expr = expr, na_value = na_value, out_file = out_file, cdo_output = cdo_output, overwrite = overwrite,  ...)
-
+nc_vertmean <- function(ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE, ...) {
+  nc_vertstat(metric = "mean", ff = ff, vars = vars, vert_scale = vert_scale, coords = coords, expr = expr, na_value = na_value, out_file = out_file, cdo_output = cdo_output, overwrite = overwrite, ...)
 }
-

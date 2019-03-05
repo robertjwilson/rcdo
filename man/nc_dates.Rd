@@ -13,8 +13,8 @@ nc_dates(ff)
 Find dates in a netcdf file
 }
 \examples{
+
 # Get the dates in the sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_dates(ff)
-
 }

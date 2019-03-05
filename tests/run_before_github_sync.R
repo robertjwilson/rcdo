@@ -26,7 +26,3 @@ nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50))
 nc_vertmean(ff, vars = "t_an", vert_scale = c(5, 30, 5))
 nc_vertmean(ff, vars = "t_an", coords = uk_coords, vert_scale = c(5, 30, 5))
 nc_vertsum(ff, vars = "t_an", coords = uk_coords, vert_scale = c(5, 30, 5))
-
-
-
-

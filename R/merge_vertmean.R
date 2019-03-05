@@ -126,8 +126,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     print(expr)
     system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
     # throw error if remapping fails
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem apply expr. Please check expr and consider setting cdo_output = TRUE and rerun")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem apply expr. Please check expr and consider setting cdo_output = TRUE and rerun")
+    }
     file.rename("dummy.nc", "merged.nc")
   }
 
@@ -137,8 +138,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     nc_remap("merged.nc", out_file = "dummy.nc", coords = coords, vert_depths = )
 
     # throw error if remapping fails
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem remapping merged files. Please consider setting cdo_output = TRUE and rerun")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem remapping merged files. Please consider setting cdo_output = TRUE and rerun")
+    }
 
     file.rename("dummy.nc", "merged.nc")
     remapped <- TRUE
@@ -151,8 +153,9 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     vert_seq <- stringr::str_flatten(vert_seq, collapse = ",")
     system(stringr::str_glue("cdo intlevel,{vert_seq} merged.nc dummy.nc"))
     # throw error if vertical interpolation failed
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem doing the vertical interpolation. Please consider setting cdo_output = TRUE and rerun")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem doing the vertical interpolation. Please consider setting cdo_output = TRUE and rerun")
+    }
     file.rename("dummy.nc", "merged.nc")
   }
 
@@ -175,9 +178,10 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     dplyr::select(Longitude, Latitude, Minimum_Depth, Maximum_Depth)
   # finally, do the vertical mean
   system("cdo vertmean merged.nc dummy.nc")
-    # throw error if vertical interpolation failed
-    if(!file.exists("dummy.nc"))
-    	stop("error: problem calculating the vertical mean. Please consider setting cdo_output = TRUE and rerun")
+  # throw error if vertical interpolation failed
+  if (!file.exists("dummy.nc")) {
+    stop("error: problem calculating the vertical mean. Please consider setting cdo_output = TRUE and rerun")
+  }
   file.rename("dummy.nc", "merged.nc")
 
   # read in the merged file to a data frame if there is no out_file
@@ -193,7 +197,7 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
 
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)
-  if(file.exists(stringr::str_c(temp_dir, "/merged.nc")))
-  	file.remove(stringr::str_c(temp_dir, "/merged.nc"))
-
+  if (file.exists(stringr::str_c(temp_dir, "/merged.nc"))) {
+    file.remove(stringr::str_c(temp_dir, "/merged.nc"))
+  }
 }

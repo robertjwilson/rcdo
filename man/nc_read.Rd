@@ -22,11 +22,15 @@ nc_read(ff, vars = NULL, date_range = NULL, cdo_output = FALSE,
 This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 }
 \examples{
+
 # Reading in data from the NOAA World Ocean Atlas sample file.
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 # if we simply want to read the data into a tibble, we just need to use nc_read
+
 nc_read(ff)
+
 # By default nc_read reads in all data fields. But we probably just want to subset it
 # If we only want to read in specific fields, we can use vars
+
 nc_read(ff, vars = "t_an")
 }

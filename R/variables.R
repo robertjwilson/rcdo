@@ -10,22 +10,15 @@
 #' # Get the variable names in the NOAA WOA sample file
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' nc_variables(ff)
-#'
-
 nc_variables <- function(ff) {
+  if (!file_valid(ff)) {
+    stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+  }
 
-	if(!file_valid(ff))
-		stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
-
-	ff_names <<- system(stringr::str_c("cdo showname ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
-		stringr::str_split(" ") %>%
-		.[[1]]
-	ff_names <- ff_names[ff_names != ""]
-	ff_names <- as.character(ff_names)
-	ff_names
-
+  ff_names <<- system(stringr::str_c("cdo showname ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
+    stringr::str_split(" ") %>%
+    .[[1]]
+  ff_names <- ff_names[ff_names != ""]
+  ff_names <- as.character(ff_names)
+  ff_names
 }
-
-
-
-

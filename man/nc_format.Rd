@@ -13,6 +13,7 @@ nc_format(ff)
 This function will tell you the format of a netcdf file
 }
 \examples{
+
 # Get the format of the sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_format(ff)

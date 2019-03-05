@@ -19,5 +19,4 @@ This function will tell you the variables in a netcdf file.
 # Get the variable names in the NOAA WOA sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_variables(ff)
-
 }

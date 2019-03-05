@@ -15,6 +15,7 @@ nc_gridsize(ff, cdo_output = FALSE, date_range = NULL)
 This function provides the number of cells in the horizontal netcdf grid
 }
 \examples{
+
 # Get the grid size of the sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_gridsize(ff)

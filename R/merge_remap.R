@@ -75,8 +75,9 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   # throw an error message if merging fails
 
-  if(!file.exists("merged.nc"))
-  	stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
+  if (!file.exists("merged.nc")) {
+    stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
+  }
 
   # we no longer need the ensemble files post-merging.
   # Delete them
@@ -91,10 +92,11 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
     print(expr)
     system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
 
-  # throw an error message if apply expr fails
+    # throw an error message if apply expr fails
 
-  if(!file.exists("dummy.nc"))
-  	stop("error: problem applying expr to merged files. Please check expr and then consider setting cdo_output = TRUE and rerun")
+    if (!file.exists("dummy.nc")) {
+      stop("error: problem applying expr to merged files. Please check expr and then consider setting cdo_output = TRUE and rerun")
+    }
 
     file.rename("dummy.nc", "merged.nc")
   }
@@ -115,6 +117,7 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)
-  if(file.exists(stringr::str_c(temp_dir, "/merged.nc")))
-  	file.remove(stringr::str_c(temp_dir, "/merged.nc"))
+  if (file.exists(stringr::str_c(temp_dir, "/merged.nc"))) {
+    file.remove(stringr::str_c(temp_dir, "/merged.nc"))
+  }
 }

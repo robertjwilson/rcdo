@@ -36,9 +36,9 @@ data frame or netcdf file.
 This function allows you to remap a netcdf horizontally and vertically to a specific latlon box. It outputs a data frame with the sum value and the maximum depth used for the calculation.
 }
 \examples{
+
 # Calculating vertical mean NOAA world ocean atlas data to the region around the UK
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 # calculate vertical mean of temperature between 5 and 30 m, using a resolution of 5 for vertical interpolation
 nc_vertmean(ff, vars = "t_an", vert_scale = c(5, 30, 5))
-
 }

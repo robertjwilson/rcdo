@@ -9,36 +9,36 @@
 #' @export
 
 nc_find <- function(directory = getwd(), var = NULL, recursive = TRUE) {
-	setwd(directory)
-	on.exit(setwd(getwd()))
+  setwd(directory)
+  on.exit(setwd(getwd()))
 
-	if(is.null(var))
-		stop("error: no variable named")
-	if(length(var) > 1)
-		stop("error: more than one variable given")
+  if (is.null(var)) {
+    stop("error: no variable named")
+  }
+  if (length(var) > 1) {
+    stop("error: more than one variable given")
+  }
 
-	print("getting here")
+  print("getting here")
 
-	# step 1. Get a list of netcdf files in the folder
-	all_files <- dir(directory, recursive = recursive) %>%
-		tibble::enframe(name = NULL) %>%
-		dplyr::rename(File = value) %>%
-		dplyr::filter(endsWith(File, ".nc"))
-	print("getting here slowly?")
+  # step 1. Get a list of netcdf files in the folder
+  all_files <- dir(directory, recursive = recursive) %>%
+    tibble::enframe(name = NULL) %>%
+    dplyr::rename(File = value) %>%
+    dplyr::filter(endsWith(File, ".nc"))
+  print("getting here slowly?")
 
-	#
-	contains_var <- function(ff){
-		print(stringr::str_glue("searching {ff}"))
-		var %in% nc_variables(ff)
-	}
+  #
+  contains_var <- function(ff) {
+    print(stringr::str_glue("searching {ff}"))
+    var %in% nc_variables(ff)
+  }
 
-	all_files <- all_files %>%
-		dplyr::mutate(contains = purrr::map_lgl(File, contains_var)) %>%
-		dplyr::filter(contains) %>%
-		dplyr::select(File) %>%
-		dplyr::pull(File)
+  all_files <- all_files %>%
+    dplyr::mutate(contains = purrr::map_lgl(File, contains_var)) %>%
+    dplyr::filter(contains) %>%
+    dplyr::select(File) %>%
+    dplyr::pull(File)
 
-	all_files
+  all_files
 }
-
-
