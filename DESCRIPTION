@@ -17,3 +17,5 @@ Imports: dplyr,
     stringr
 URL: https://github.com/r4ecology/rcdo
 BugReports: https://github.com/r4ecology/rcdo/issues
+Suggests: 
+    testthat
