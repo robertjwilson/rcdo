@@ -117,3 +117,8 @@ ggplot()+
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
+Computational approach
+----------------------
+
+rcdo makes system calls to CDO to carry out calculations on netcdf files. This requires the production of new netcdf files. rcdo therefore copies all netcdf files to a new temporary folder before any manipulation. This ring fences the operations and also prevents attempts to create files in read only folders.
