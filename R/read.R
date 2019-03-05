@@ -26,16 +26,16 @@
 #' @export
 
 #' @examples
-#' 
+#'
 #' # Reading in data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # if we simply want to read the data into a tibble, we just need to use nc_read
-#' 
+#'
 #' nc_read(ff)
-#' 
+#'
 #' # By default nc_read reads in all data fields. But we probably just want to subset it
 #' # If we only want to read in specific fields, we can use vars
-#' 
+#'
 #' nc_read(ff, vars = "t_an")
 nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
   if (!file_valid(ff)) {
@@ -43,7 +43,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   }
 
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = TRUE)) > 1) {
+  if (as.integer(system(stringr::str_glue("cdo ngrids {ff}"), intern = TRUE, ignore.stderr = TRUE)) > 1) {
     warning("warning: there is more than one horizontal grid in the netcdf file. Please check output for errors!")
   }
 
@@ -57,7 +57,6 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
       }
     }
   }
-
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
@@ -99,7 +98,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
     stop("error: file is not cdo compatible, even after trying to fix the coordinates")
   }
 
-  grid_details <- system(stringr::str_c("cdo griddes ", ff), intern = TRUE, ignore.stderr = TRUE)
+  grid_details <- system(stringr::str_glue("cdo griddes {ff}"), intern = TRUE, ignore.stderr = TRUE)
 
   grid_details <- grid_details %>%
     dplyr::as_tibble()
@@ -126,7 +125,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   lon_name <- stringr::str_replace_all(grid_details$xname, " ", "")
   lat_name <- stringr::str_replace_all(grid_details$yname, " ", "")
 
-  depths <- system(stringr::str_c("cdo showlevel ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+  depths <- system(stringr::str_glue("cdo showlevel {ff}"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
     stringr::str_split(" ") %>%
     .[[1]] %>%
     as.numeric()
@@ -139,7 +138,8 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
       stop("error check date range supplied")
     }
 
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    # system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo seldate,{min_data},{max_data} {ff} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: please check date range supplied")
     }
@@ -147,7 +147,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   }
   depths <- depths[complete.cases(depths)]
 
-  times <- system(stringr::str_c("cdo showtimestamp ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+  times <- system(stringr::str_glue("cdo showtimestamp {ff}"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
     stringr::str_split(" ") %>%
     .[[1]]
   times <- times[nchar(times) > 0]
@@ -212,7 +212,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   }
 
   if (is.null(vars)) {
-    vars <- system(stringr::str_c("cdo showname ", ff), intern = TRUE, ignore.stderr = TRUE)
+    vars <- system(stringr::str_glue("cdo showname {ff}"), intern = TRUE, ignore.stderr = TRUE)
     vars <- stringr::str_split(vars, " ") %>%
       .[[1]]
     vars <- vars[nchar(vars) > 0]
