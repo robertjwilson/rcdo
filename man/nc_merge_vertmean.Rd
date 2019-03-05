@@ -4,13 +4,13 @@
 \alias{nc_merge_vertmean}
 \title{merge and calculate the vertical means for a list of ncdf files}
 \usage{
-nc_merge_vertmean(ff_list, vars = NULL, coords, vert_scale,
+nc_merge_vertmean(ff_list, vars = NULL, coords = NULL, vert_scale,
   merge = "merge", expr = NULL, remap_point = "pre",
   na_value = NULL, out_file = NULL, cdo_output = TRUE,
   overwrite = FALSE)
 }
 \arguments{
-\item{ff_list}{This is a list of files to merge}
+\item{ff_list}{This is a character vector containing the files to merge}
 
 \item{vars}{The variables to select from the files for merging..}
 

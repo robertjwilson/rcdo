@@ -5,25 +5,25 @@
 \title{merge and remap a list of ncdf files}
 \usage{
 nc_merge_remap(ff_list, merge = "merge", expr = NULL,
-  remap_point = "pre", ..., out_file = NULL, cdo_output = TRUE,
-  overwrite = FALSE)
+  remap_point = "pre", out_file = NULL, cdo_output = TRUE,
+  overwrite = FALSE, ...)
 }
 \arguments{
-\item{ff_list}{This is a list of files to merge}
+\item{ff_list}{This is a character vector of files to merge}
 
 \item{merge}{This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.}
 
-\item{expr}{This is an expression to apply to the merged files.}
+\item{expr}{This is a cdo expression to apply to the merged files.}
 
 \item{remap_point}{This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.}
 
-\item{...}{Arguments to be sent to nc_remap.}
-
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
-\item{cdo_output}{set to TRUE if you want to see the cdo output}
+\item{cdo_output}{Set to TRUE if you want to see the cdo output}
 
 \item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
+
+\item{...}{Arguments to be sent to nc_remap.}
 }
 \value{
 data frame or netcdf file.

@@ -8,11 +8,11 @@ nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
   cdo_output = TRUE, overwrite = FALSE)
 }
 \arguments{
-\item{ff_list}{This is a list of files to merge}
+\item{ff_list}{This is a character vector containing the files to merge}
 
 \item{merge}{This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.}
 
-\item{expr}{This is an expression to apply to the merged files.}
+\item{expr}{This is a cdo expression to apply to the merged files.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
@@ -24,5 +24,5 @@ nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
 data frame or netcdf file.
 }
 \description{
-This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
+This function allows you to merge a list of netcdf files
 }
