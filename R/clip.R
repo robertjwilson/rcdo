@@ -24,17 +24,17 @@
 # need an option for cacheing results...
 
 #' @examples
-#' 
+#'
 #' # Clipping data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-#' 
+#'
 #' # clip to a specific depth range using vert_range
-#' 
+#'
 #' nc_clip(ff, vert_range = c(1, 5))
-#' 
+#'
 #' # clip to a specific longitude and latitude box
 #' # Clipping to the region around the UK
-#' 
+#'
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE) {
 
@@ -233,7 +233,10 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
         dplyr::mutate(Depth = depths[1])
     }
 
-
+    # remove the temporary files created
+    setwd(temp_dir)
+    if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+    	unlink(temp_dir, recursive = TRUE)
 
     return(nc_grid)
   }
@@ -241,12 +244,14 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   # change the working directory back to the original
 
   setwd(init_dir)
-  if (file.exists(stringr::str_c(temp_dir, "/raw.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-  }
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
-  file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+
+
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
 }
 
 # ff <- "~/Dropbox/rcdo/inst/extdata/woa18_decav_t01_01.nc"
