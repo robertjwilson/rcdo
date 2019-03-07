@@ -189,7 +189,12 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     result <- nc_read("merged.nc")
     result <- result %>%
       dplyr::inner_join(max_depths)
-    file.remove("merged.nc")
+
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
+
     return(result)
   }
 

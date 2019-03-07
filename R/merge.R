@@ -87,6 +87,11 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
   # read in the merged file to a data frame if there is no out_file
   if (is.null(out_file)) {
     result <- nc_read("merged.nc")
+
+    # remove the temporary files created
+    setwd(temp_dir)
+    if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+    	unlink(temp_dir, recursive = TRUE)
     return(result)
   }
 
@@ -94,6 +99,7 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
 
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)
+
   # remove the temporary files created
   setwd(temp_dir)
   if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
