@@ -18,7 +18,7 @@ nc_read(ff, vars = NULL, cdo_output = FALSE, dim_check = 1.5e+08)
 \item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.}
 }
 \description{
-This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
+This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 }
 \examples{
 
