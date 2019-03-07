@@ -22,13 +22,13 @@
 # need an option for cacheing results...
 
 #' @examples
-#' 
+#'
 #' # Remapping NOAA world ocean atlas data to the region around the UK
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # remapping to 1 degree resolution across all depth layers
 #' uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
 #' nc_remap(ff, vars = "t_an", coords = uk_coords)
-#' 
+#'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
@@ -150,10 +150,14 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   if (is.null(out_file)) {
     nc_grid <- nc_read("raw_clipped.nc")
     # remove the files that have been generated
-    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-    # file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-    file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
-    file.remove(stringr::str_c(temp_dir, "/mygrid"))
+    # this checks how many files are in the folder, and makes sure it is less than 6
+    # If it's greater than 5 something has gone wrong
+    if(length(temp_dir) < 6)
+    	file.remove(dir(temp_dir))
+    # file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
+    # # file.remove(stringr::str_c(temp_dir, "/raw.nc"))
+    # file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
+    # file.remove(stringr::str_c(temp_dir, "/mygrid"))
 
     return(nc_grid)
   }
