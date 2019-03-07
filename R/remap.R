@@ -154,11 +154,6 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     # If it's greater than 5 something has gone wrong
     if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
     	unlink(temp_dir, recursive = TRUE)
-    	# file.remove(dir(temp_dir))
-    # file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-    # # file.remove(stringr::str_c(temp_dir, "/raw.nc"))
-    # file.remove(stringr::str_c(temp_dir, "/remapweights.nc"))
-    # file.remove(stringr::str_c(temp_dir, "/mygrid"))
 
     return(nc_grid)
   }
