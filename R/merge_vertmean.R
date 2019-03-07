@@ -113,11 +113,6 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
 
   system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"))
 
-  # we no longer need the ensemble files post-merging.
-  # Delete them
-
-  file.remove(new_ens)
-
   # now, apply the expression if it has been supplied.....
   # First we need to make sure the expression has no spaces
 
