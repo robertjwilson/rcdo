@@ -260,6 +260,8 @@ add_missing_grid <- function(ff, vars = NULL) {
   file.rename("dummy.nc", ff)
   vars_2grid <- stringr::str_flatten(vars_2grid, collapse = " ")
 
+  file.remove("myattributes.txt")
+
 
   ## add something to say what grid type it now is
 
