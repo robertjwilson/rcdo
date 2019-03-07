@@ -108,3 +108,6 @@ ggplot()+
 ## Computational approach
 
 rcdo makes system calls to CDO to carry out calculations on netcdf files. This requires the production of new netcdf files. rcdo therefore copies all netcdf files to a new temporary folder before any manipulation. This ring fences the operations and also prevents attempts to create files in read only folders. 
+
+rcdo processes can be run simultaneously. The temporary folders are randomly created each time and are then deleted at the end of the process. This means there will be no conflicts between different rcdo instances.
+
