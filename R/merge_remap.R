@@ -79,11 +79,6 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
     stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
   }
 
-  # we no longer need the ensemble files post-merging.
-  # Delete them
-
-  file.remove(new_ens)
-
   # now, apply the expression if it has been supplied.....
   # First we need to make sure the expression has no spaces
 
@@ -111,7 +106,6 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
   if (is.null(out_file)) {
     result <- nc_read("merged.nc")
 
-
   # remove the temporary files created
   setwd(temp_dir)
   if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
@@ -129,6 +123,5 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
   setwd(temp_dir)
   if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
   	unlink(temp_dir, recursive = TRUE)
-
 
 }
