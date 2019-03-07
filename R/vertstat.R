@@ -161,6 +161,12 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     nc_grid <- nc_read("raw_clipped.nc")
     nc_grid <- nc_grid %>%
       dplyr::inner_join(max_depths)
+
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
+
     return(nc_grid)
   }
   # save the file, if that's what you chose to do
@@ -169,7 +175,12 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-  }
+
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
+
+
+
 }
