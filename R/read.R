@@ -10,8 +10,6 @@
 # a smarter way to handle nas in the data frame, as some values might be na but others not
 # add drop_na option
 
-# need to modify the code so that it can run in parallel or multiple sessions, without the temporary folders clashing.
-
 # also, add a check for the number of horizontal grids. Shouldn't read the netcdf if there is more than 1 GB(ish)
 
 
@@ -236,7 +234,11 @@ nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
 
   ncdf4::nc_close(nc_raw)
   if (delete_copy) {
-    file.remove(stringr::str_glue(temp_dir, ff))
+  	# remove the temporary files created
+  	setwd(temp_dir)
+  	if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+  		unlink(temp_dir, recursive = TRUE)
+  	}
   }
   return(nc_grid)
 }
