@@ -20,7 +20,7 @@
 #' @description This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. You are able to specify a date range. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 #' @param ff This is the file to read.
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
-#' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
+###' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @param dim_check The number of data points in the final data frame that will ask to continue. Set to NULL if you don't want to check.
 #' @export
@@ -37,16 +37,14 @@
 #' # If we only want to read in specific fields, we can use vars
 #'
 #' nc_read(ff, vars = "t_an")
-nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_check = 15e7) {
+nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
 
-
   if (as.integer(system(stringr::str_glue("cdo ngrids {ff}"), intern = TRUE, ignore.stderr = TRUE)) > 1) {
     warning("warning: there is more than one horizontal grid in the netcdf file. Please check output for errors!")
   }
-
 
   # check that the vars given are actually in the file
   if (!is.null(vars)) {
@@ -129,22 +127,23 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
     stringr::str_split(" ") %>%
     .[[1]] %>%
     as.numeric()
+#
+#   if (!is.null(date_range)) {
+#     min_date <- lubridate::dmy(date_range[1])
+#     max_date <- lubridate::dmy(date_range[2])
+#
+#     if (is.na(min_date) | is.na(max_date)) {
+#       stop("error check date range supplied")
+#     }
+#
+#     # system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+#     system(stringr::str_glue("cdo seldate,{min_data},{max_data} {ff} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+#     if (!file.exists("dummy.nc")) {
+#       stop("error: please check date range supplied")
+#     }
+#     file.rename("dummy.nc", ff)
+#   }
 
-  if (!is.null(date_range)) {
-    min_date <- lubridate::dmy(date_range[1])
-    max_date <- lubridate::dmy(date_range[2])
-
-    if (is.na(min_date) | is.na(max_date)) {
-      stop("error check date range supplied")
-    }
-
-    # system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-    system(stringr::str_glue("cdo seldate,{min_data},{max_data} {ff} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-    if (!file.exists("dummy.nc")) {
-      stop("error: please check date range supplied")
-    }
-    file.rename("dummy.nc", ff)
-  }
   depths <- depths[complete.cases(depths)]
 
   times <- system(stringr::str_glue("cdo showtimestamp {ff}"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
@@ -158,7 +157,7 @@ nc_read <- function(ff, vars = NULL, date_range = NULL, cdo_output = FALSE, dim_
   nc_lat <- ncdf4::ncvar_get(nc_raw, lat_name)
 
   # this is coded on the assumption that when there is only one depth and time, those dimensions will be collapsed to nothing
-  # this should be a valid assumption
+  # this should be a valid assumption, and works on all netcdf files tested
 
   if ("curvilinear" %nin% grid_type & "unstructured" %nin% grid_type) {
 
