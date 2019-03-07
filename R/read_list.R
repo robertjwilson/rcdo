@@ -183,9 +183,9 @@ nc_read_list <- function(ff_list, vars = NULL, cdo_output = FALSE, dim_check = 1
         }
 
         if (length(depths) < 2 & length(times) < 2) {
-          nc_grid <- dplyr::data_frame(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
+          nc_grid <- dplyr::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
         } else {
-          nc_grid <- dplyr::data_frame(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
+          nc_grid <- dplyr::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
 
           dt_grid <- eval(parse(text = stringr::str_c(
             "expand.grid(",
