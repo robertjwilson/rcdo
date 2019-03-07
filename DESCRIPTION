@@ -11,10 +11,14 @@ License: CC0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
-Imports: dplyr,
+Imports: 
+    dplyr,
     magrittr,
     ncdf4,
-    stringr
+    stringr,
+    tibble,
+    purrr,
+    tidyr
 URL: https://github.com/r4ecology/rcdo
 BugReports: https://github.com/r4ecology/rcdo/issues
 Suggests: 
