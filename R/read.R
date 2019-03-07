@@ -58,6 +58,15 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
 
   init_dir <- getwd()
   on.exit(setwd(init_dir))
+
+
+  # It is possible the files are not cdo compatible.
+  # Right now the package attempts to make them cdo compatible. Is there a smarter way round this for reading?
+  #
+  delete_copy <- FALSE
+
+  if (!cdo_compatible(ff)) {
+  	delete_copy <- TRUE
   temp_dir <- random_temp()
 
   file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
@@ -80,20 +89,19 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
     file.remove("dummy.nc")
   }
 
-  # copy the file to the temporary folder
+  # We need to change ff to the name of the copied file so that the following code works
 
   ff <- "raw.nc"
 
   # If the file is not cdo compatible, we'll need to attempt to add coordinate variables...
 
-  if (!cdo_compatible(ff)) {
     add_missing_grid(ff, vars = vars)
-  }
 
   # If this does not make the file cdo compatible, then we need to throw an error
 
   if (!cdo_compatible("raw.nc")) {
     stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+  }
   }
 
   grid_details <- system(stringr::str_glue("cdo griddes {ff}"), intern = TRUE, ignore.stderr = TRUE)
@@ -227,5 +235,7 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
     dplyr::as_tibble()
 
   ncdf4::nc_close(nc_raw)
+  if(delete_copy)
+  	file.remove(stringr::str_glue(temp_dir, ff))
   return(nc_grid)
 }
