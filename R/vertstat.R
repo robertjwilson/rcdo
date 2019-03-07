@@ -162,10 +162,11 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
     nc_grid <- nc_grid %>%
       dplyr::inner_join(max_depths)
 
-  # remove the temporary files created
-  setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
+    # remove the temporary files created
+    setwd(temp_dir)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
 
     return(nc_grid)
   }
@@ -178,9 +179,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   # remove the temporary files created
   setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
-
-
-
+  if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+    unlink(temp_dir, recursive = TRUE)
+  }
 }

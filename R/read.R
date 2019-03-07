@@ -26,18 +26,18 @@
 #' @export
 
 #' @examples
-#'
+#' 
 #' # Reading in data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' # if we simply want to read the data into a tibble, we just need to use nc_read
-#'
+#' 
 #' nc_read(ff)
-#'
+#' 
 #' # By default nc_read reads in all data fields. But we probably just want to subset it
 #' # If we only want to read in specific fields, we can use vars
-#'
+#' 
 #' nc_read(ff, vars = "t_an")
-nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
+nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -66,42 +66,42 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
   delete_copy <- FALSE
 
   if (!cdo_compatible(ff)) {
-  	delete_copy <- TRUE
-  temp_dir <- random_temp()
+    delete_copy <- TRUE
+    temp_dir <- random_temp()
 
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
+    file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
 
-  # remove anything from the temporary folder to make sure there are no clashes etc.
+    # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  setwd(temp_dir)
+    setwd(temp_dir)
 
-  if (getwd() == init_dir) {
-    stop("error: there was a problem changing the directory")
-  }
+    if (getwd() == init_dir) {
+      stop("error: there was a problem changing the directory")
+    }
 
-  if (getwd() != temp_dir) {
-    stop("error: there was a problem changing the directory")
-  }
+    if (getwd() != temp_dir) {
+      stop("error: there was a problem changing the directory")
+    }
 
-  temp_dir <- stringr::str_c(temp_dir, "/")
+    temp_dir <- stringr::str_c(temp_dir, "/")
 
-  if (file.exists("dummy.nc")) {
-    file.remove("dummy.nc")
-  }
+    if (file.exists("dummy.nc")) {
+      file.remove("dummy.nc")
+    }
 
-  # We need to change ff to the name of the copied file so that the following code works
+    # We need to change ff to the name of the copied file so that the following code works
 
-  ff <- "raw.nc"
+    ff <- "raw.nc"
 
-  # If the file is not cdo compatible, we'll need to attempt to add coordinate variables...
+    # If the file is not cdo compatible, we'll need to attempt to add coordinate variables...
 
     add_missing_grid(ff, vars = vars)
 
-  # If this does not make the file cdo compatible, then we need to throw an error
+    # If this does not make the file cdo compatible, then we need to throw an error
 
-  if (!cdo_compatible("raw.nc")) {
-    stop("error: file is not cdo compatible, even after trying to fix the coordinates")
-  }
+    if (!cdo_compatible("raw.nc")) {
+      stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+    }
   }
 
   grid_details <- system(stringr::str_glue("cdo griddes {ff}"), intern = TRUE, ignore.stderr = TRUE)
@@ -135,22 +135,22 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
     stringr::str_split(" ") %>%
     .[[1]] %>%
     as.numeric()
-#
-#   if (!is.null(date_range)) {
-#     min_date <- lubridate::dmy(date_range[1])
-#     max_date <- lubridate::dmy(date_range[2])
-#
-#     if (is.na(min_date) | is.na(max_date)) {
-#       stop("error check date range supplied")
-#     }
-#
-#     # system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-#     system(stringr::str_glue("cdo seldate,{min_data},{max_data} {ff} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-#     if (!file.exists("dummy.nc")) {
-#       stop("error: please check date range supplied")
-#     }
-#     file.rename("dummy.nc", ff)
-#   }
+  #
+  #   if (!is.null(date_range)) {
+  #     min_date <- lubridate::dmy(date_range[1])
+  #     max_date <- lubridate::dmy(date_range[2])
+  #
+  #     if (is.na(min_date) | is.na(max_date)) {
+  #       stop("error check date range supplied")
+  #     }
+  #
+  #     # system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " ", ff, " dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  #     system(stringr::str_glue("cdo seldate,{min_data},{max_data} {ff} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  #     if (!file.exists("dummy.nc")) {
+  #       stop("error: please check date range supplied")
+  #     }
+  #     file.rename("dummy.nc", ff)
+  #   }
 
   depths <- depths[complete.cases(depths)]
 
@@ -235,7 +235,8 @@ nc_read <- function(ff, vars = NULL,  cdo_output = FALSE, dim_check = 15e7) {
     dplyr::as_tibble()
 
   ncdf4::nc_close(nc_raw)
-  if(delete_copy)
-  	file.remove(stringr::str_glue(temp_dir, ff))
+  if (delete_copy) {
+    file.remove(stringr::str_glue(temp_dir, ff))
+  }
   return(nc_grid)
 }

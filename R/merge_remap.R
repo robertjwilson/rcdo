@@ -106,10 +106,11 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
   if (is.null(out_file)) {
     result <- nc_read("merged.nc")
 
-  # remove the temporary files created
-  setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
+    # remove the temporary files created
+    setwd(temp_dir)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
 
     return(result)
   }
@@ -121,7 +122,7 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   # remove the temporary files created
   setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
-
+  if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+    unlink(temp_dir, recursive = TRUE)
+  }
 }

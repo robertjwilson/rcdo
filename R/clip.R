@@ -24,17 +24,17 @@
 # need an option for cacheing results...
 
 #' @examples
-#'
+#' 
 #' # Clipping data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-#'
+#' 
 #' # clip to a specific depth range using vert_range
-#'
+#' 
 #' nc_clip(ff, vert_range = c(1, 5))
-#'
+#' 
 #' # clip to a specific longitude and latitude box
 #' # Clipping to the region around the UK
-#'
+#' 
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE) {
 
@@ -222,7 +222,6 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     file.rename("dummy.nc", "raw_clipped.nc")
   }
 
-
   if (is.null(out_file)) {
     print("converting to a data frame")
     nc_grid <- nc_read("raw_clipped.nc")
@@ -235,8 +234,9 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
     # remove the temporary files created
     setwd(temp_dir)
-    if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-    	unlink(temp_dir, recursive = TRUE)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
 
     return(nc_grid)
   }
@@ -247,16 +247,9 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
 
-
   # remove the temporary files created
   setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
+  if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+    unlink(temp_dir, recursive = TRUE)
+  }
 }
-
-# ff <- "~/Dropbox/rcdo/inst/extdata/woa18_decav_t01_01.nc"
-
-# library(rcdo)
-# source("~/Dropbox/rcdo/R/utils.R")
-#
-# nc_clip(ff, vert_range = c(2,2))

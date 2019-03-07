@@ -185,10 +185,11 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
     result <- result %>%
       dplyr::inner_join(max_depths)
 
-  # remove the temporary files created
-  setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
+    # remove the temporary files created
+    setwd(temp_dir)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
 
     return(result)
   }
@@ -200,8 +201,7 @@ nc_merge_vertmean <- function(ff_list, vars = NULL, coords = NULL, vert_scale, m
 
   # remove the temporary files created
   setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
-
-
+  if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+    unlink(temp_dir, recursive = TRUE)
+  }
 }

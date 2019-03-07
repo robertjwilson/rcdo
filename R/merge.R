@@ -85,8 +85,9 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
 
     # remove the temporary files created
     setwd(temp_dir)
-    if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-    	unlink(temp_dir, recursive = TRUE)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
     return(result)
   }
 
@@ -97,9 +98,7 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
 
   # remove the temporary files created
   setwd(temp_dir)
-  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
-  	unlink(temp_dir, recursive = TRUE)
-
-
-
+  if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+    unlink(temp_dir, recursive = TRUE)
+  }
 }
