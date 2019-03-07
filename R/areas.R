@@ -9,7 +9,7 @@
 # need an option for cacheing results...
 
 #' @examples
-#' 
+#'
 #' # Calculating cell areas for NOAA world ocean atlas data sample file
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 #' nc_cellareas(ff)
@@ -58,5 +58,11 @@ nc_cellareas <- function(ff, cdo_output = FALSE) {
   }
 
   # read the grid cell areas to a data frame
-  nc_read("grid_area.nc", cdo_output = cdo_output)
+  result <- nc_read("grid_area.nc", cdo_output = cdo_output)
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
+
+  result
 }
