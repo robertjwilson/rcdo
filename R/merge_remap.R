@@ -117,7 +117,11 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)
-  if (file.exists(stringr::str_c(temp_dir, "/merged.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/merged.nc"))
-  }
+
+  # remove the temporary files created
+  setwd(temp_dir)
+  if(length(dir(temp_dir)) < 6 & temp_dir != init_dir)
+  	unlink(temp_dir, recursive = TRUE)
+
+
 }
