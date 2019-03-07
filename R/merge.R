@@ -64,11 +64,6 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
     stop("error: problem merging files. Please set cdo_output = TRUE and rerun")
   }
 
-  # we no longer need the ensemble files post-merging.
-  # Delete them
-
-  file.remove(new_ens)
-
   # now, apply the expression if it has been supplied.....
   # First we need to make sure the expression has no spaces
 
