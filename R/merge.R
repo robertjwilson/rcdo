@@ -37,7 +37,7 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
     ens_file <- stringr::str_glue("raw{tracker}.nc")
     new_ens <- c(new_ens, ens_file)
     tracker <- tracker + 1
-    file.copy(ff, stringr::str_c(temp_dir, ens_file), overwrite = TRUE)
+    file.copy(ff, stringr::str_c(temp_dir, "/", ens_file), overwrite = TRUE)
   }
 
   setwd(temp_dir)
