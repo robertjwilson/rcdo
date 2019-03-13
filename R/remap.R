@@ -74,7 +74,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # check if the raw file is compatible with cdo. If not, just regrid it
 
-  add_missing_grid("raw.nc", vars)
+  if(!cdo_compatible("raw.nc"))
+  	add_missing_grid("raw.nc", vars)
 
   # set the missing value, if it has not been set already
   if (!is.null(na_value)) {
