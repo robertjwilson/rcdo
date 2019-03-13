@@ -117,7 +117,6 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   }
 
   if (!is.null(vert_depths)) {
-    vert_depths <- stringr::str_flatten(vert_depths, ",")
    	available_depths <- nc_depths("raw.nc")
    	if(min(vert_depths) < min(available_depths$Depth))
    		stop("error: minimum depth supplied is too low")
@@ -125,6 +124,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
    	if(max(vert_depths) > max(available_depths$Depth))
    		stop("error: maximum depth supplied is too low")
 
+    vert_depths <- stringr::str_flatten(vert_depths, ",")
     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if vertical interpolation failed
     if (!file.exists("dummy.nc")) {
