@@ -234,11 +234,20 @@ nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
 
   ncdf4::nc_close(nc_raw)
   if (delete_copy) {
-  	# remove the temporary files created
-  	setwd(temp_dir)
-  	if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
-  		unlink(temp_dir, recursive = TRUE)
-  	}
+    # remove the temporary files created
+    setwd(temp_dir)
+    if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
+      unlink(temp_dir, recursive = TRUE)
+    }
+  }
+
+  # finally, we need to add the times in if there is only one in the data set
+  if(length(times) == 1)
+  {
+  file_date <- nc_dates(ff)$Date
+  nc_grid <- nc_grid %>%
+  	dplyr::mutate(Date = file_date)
+
   }
   return(nc_grid)
 }
