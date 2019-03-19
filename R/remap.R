@@ -74,8 +74,9 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # check if the raw file is compatible with cdo. If not, just regrid it
 
-  if(!cdo_compatible("raw.nc"))
-  	add_missing_grid("raw.nc", vars)
+  if (!cdo_compatible("raw.nc")) {
+    add_missing_grid("raw.nc", vars)
+  }
 
   # set the missing value, if it has not been set already
   if (!is.null(na_value)) {
@@ -116,13 +117,24 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     file.rename("dummy.nc", "raw.nc")
   }
 
-  if (!is.null(vert_depths)) {
-   	available_depths <- nc_depths("raw.nc")
-   	if(min(vert_depths) < min(available_depths$Depth))
-   		stop("error: minimum depth supplied is too low")
+  # it is possible there are no vertical depths in the file. In this case we throw an error message
+  vertical_remap <- TRUE
+  num_depths <- length(nc_depths("raw.nc"))
 
-   	if(max(vert_depths) > max(available_depths$Depth))
-   		stop("error: maximum depth supplied is too low")
+  if (!is.null(vert_depths) & num_depths < 2) {
+  	warning("There are none or one vertical depths in the file. Vertical interpolation not carried out.")
+  	vertical_remap <- FALSE
+  }
+
+  if (!is.null(vert_depths) & vertical_remap) {
+    available_depths <- nc_depths("raw.nc")
+    if (min(vert_depths) < min(available_depths$Depth)) {
+      stop("error: minimum depth supplied is too low")
+    }
+
+    if (max(vert_depths) > max(available_depths$Depth)) {
+      stop("error: maximum depth supplied is too low")
+    }
 
     vert_depths <- stringr::str_flatten(vert_depths, ",")
     system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
@@ -144,6 +156,10 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   if (!is.null(coords)) {
     system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
+
+  	# zip the file up if we need to save the output as netcdf
+  	if(!is.null(out_file))
+    system(stringr::str_c("cdo -z zip remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE)) else
     system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if vertical interpolation failed
     if (!file.exists("dummy.nc")) {
