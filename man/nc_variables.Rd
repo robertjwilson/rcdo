@@ -4,10 +4,12 @@
 \alias{nc_variables}
 \title{List the variables in a netcdf file.}
 \usage{
-nc_variables(ff)
+nc_variables(ff, detailed = FALSE)
 }
 \arguments{
 \item{ff}{This is the file to read variables from.}
+
+\item{details}{Do you want a data frame that provides the long name and units of the variable?}
 }
 \value{
 list of variables
@@ -19,4 +21,6 @@ This function will tell you the variables in a netcdf file.
 # Get the variable names in the NOAA WOA sample file
 ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
 nc_variables(ff)
+# A data frame showing the variables, their long names and units
+nc_variables(ff, details = TRUE)
 }
