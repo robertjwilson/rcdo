@@ -156,7 +156,11 @@ nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
     stringr::str_split(" ") %>%
     .[[1]]
   times <- times[nchar(times) > 0]
-
+  # get the date when there is only one
+  if(length(times) == 1)
+  {
+  	file_date <- nc_dates(ff)$Date
+  }
   # now, pull in the longitudes and latitudes...
   nc_raw <- ncdf4::nc_open(ff)
   nc_lon <- ncdf4::ncvar_get(nc_raw, lon_name)
@@ -244,7 +248,7 @@ nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
   # finally, we need to add the times in if there is only one in the data set
   if(length(times) == 1)
   {
-  file_date <- nc_dates(ff)$Date
+  # file_date <- nc_dates(ff)$Date
   nc_grid <- nc_grid %>%
   	dplyr::mutate(Time = file_date)
 
