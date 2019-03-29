@@ -120,8 +120,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   # it is possible there are no vertical depths in the file. In this case we throw an error message
   vertical_remap <- TRUE
   num_depths <- nrow(nc_depths("raw.nc"))
-
-  if (!is.null(vert_depths) & num_depths < 2) {
+	if(!is.null(vert_depths))
+  if (num_depths < 2) {
   	warning("There are none or one vertical depths in the file. Vertical interpolation not carried out.")
   	vertical_remap <- FALSE
   }
