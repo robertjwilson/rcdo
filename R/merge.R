@@ -11,6 +11,15 @@
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @return data frame or netcdf file.
 #' @export
+#'
+#' @examples
+# Merging NOAA SST and sea ice cover climatologies
+#' ff1 <- system.file("extdata", "icec.mon.ltm.1981-2010.nc", package = "rcdo")
+#' ff2 <- system.file("extdata", "sst.mon.ltm.1981-2010.nc", package = "rcdo")
+
+#' ff_list <- c(ff1, ff2)
+#' coords <- expand.grid(Longitude = -39.5:10.5, Latitude = 40.5:69.5)
+#' nc_merge(ff_list, cdo_output = TRUE)
 
 nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo_output = TRUE, overwrite = FALSE) {
 

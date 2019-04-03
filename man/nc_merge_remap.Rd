@@ -31,3 +31,11 @@ data frame or netcdf file.
 \description{
 This function allows you to remap a netcdf horizontally and vertically to a specific latlon box
 }
+\examples{
+
+ff1 <- system.file("extdata", "icec.mon.ltm.1981-2010.nc", package = "rcdo")
+ff2 <- system.file("extdata", "sst.mon.ltm.1981-2010.nc", package = "rcdo")
+ff_list <- c(ff1, ff2)
+uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+nc_merge_remap(ff_list, coords = uk_coords, cdo_output = TRUE)
+}

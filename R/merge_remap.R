@@ -13,6 +13,19 @@
 #' @param ... Arguments to be sent to nc_remap.
 #' @return data frame or netcdf file.
 #' @export
+#'
+#'
+#'
+#' @examples
+#'
+# Regridding NOAA temperature data to a depth of 5 and 30 metres in the waters around the UK
+#' ff1 <- system.file("extdata", "icec.mon.ltm.1981-2010.nc", package = "rcdo")
+#' ff2 <- system.file("extdata", "sst.mon.ltm.1981-2010.nc", package = "rcdo")
+
+#' ff_list <- c(ff1, ff2)
+#' uk_coords <- expand.grid(Longitude = seq(-20, 10, 1), Latitude = seq(48, 62, 1))
+
+#' nc_merge_remap(ff_list, coords = uk_coords, cdo_output = TRUE)
 
 nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, cdo_output = TRUE, overwrite = FALSE, ...) {
   if (remap_point %nin% c("pre", "post")) {
