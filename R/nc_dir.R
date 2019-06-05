@@ -15,7 +15,8 @@ nc_dir <- function(directory = getwd(), recursive = TRUE, print = FALSE) {
 
 
   all_files <- dir(directory, recursive = recursive) %>%
-    tibble::enframe(name = NULL)
+    tibble::enframe(name = NULL) %>%
+    dplyr::filter(endsWith(value, ".nc") | endsWith(value, ".nc4"))
 
   get_vars <- function(ff) {
     if (print) {
