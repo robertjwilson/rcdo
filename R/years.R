@@ -1,13 +1,9 @@
 
-
-
 #' @title Find years available in a netcdf file
 #'
 #' @description Find years available in a netcdf file
 #' @param ff This is the file to read years from.
 #' @export
-
-# need an option for cacheing results...
 
 #' @examples
 #'
