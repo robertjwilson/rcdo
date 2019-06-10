@@ -4,17 +4,16 @@
 #'
 #' @description This function will list the netcdf files in a directory that contain a specified variable
 #' @param directory This is the directory to check.
-#' @param recursive Do you want to recursive look through a directory?
+#' @param recurse Do you want to recursive look through a directory?
 #' @param print Do you want to print the name of files as you check them?
 #' @return data frame. First column is the file name. Remaining column are the variables, with TRUE signifying the variable is available in the file on that row.
 #' @export
 
-nc_dir <- function(directory = getwd(), recursive = TRUE, print = FALSE) {
+nc_dir <- function(directory = getwd(), recurse = TRUE, print = FALSE) {
   setwd(directory)
   on.exit(setwd(getwd()))
 
-
-  all_files <- dir(directory, recursive = recursive) %>%
+  all_files <- dir(directory, recursive = recurse) %>%
     tibble::enframe(name = NULL) %>%
     dplyr::filter(endsWith(value, ".nc") | endsWith(value, ".nc4"))
 
