@@ -66,7 +66,7 @@ file_valid <- function(ff) {
     return(FALSE)
   }
 
-  if (!endsWith(ff, ".nc")) {
+  if (!(endsWith(ff, ".nc") | endsWith(ff, ".nc4") | endsWith(ff, ".dtm"))){
     return(FALSE)
   }
 
