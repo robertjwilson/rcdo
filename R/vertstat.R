@@ -34,7 +34,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   vert_depths <- seq(vert_scale[1], vert_scale[2], vert_scale[3])
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1) {
+  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
     stop("error: there is more than one horizontal grid in the netcdf file. This function cannot currently handle multiple grids")
   }
 
@@ -72,7 +72,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   remap_run <- FALSE
 
   if (length(list(...)) >= 1 | !is.null(coords)) {
-    nc_remap("raw.nc", vars = vars, cdo_output = TRUE, coords = coords, ..., out_file = "dummy.nc", na_value = na_value)
+    nc_remap("raw.nc", vars = vars, cdo_output = cdo_output, coords = coords, ..., out_file = "dummy.nc", na_value = na_value)
     file.rename("dummy.nc", "raw.nc")
     remap_run <- TRUE
   }
@@ -95,7 +95,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
     # set the missing value, if it has not been set already
     if (!is.null(na_value)) {
-      system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+      system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
       # throw error if missing value could not be set
       if (!file.exists("dummy.nc")) {
         stop("error: problem setting missing value. Considering setting cdo_output=TRUE and rerunning.")
@@ -139,7 +139,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   if (!is.null(expr)) {
     expr <- stringr::str_replace_all(expr, " ", "")
     print(expr)
-    system(stringr::str_glue("cdo aexpr,'{expr}' raw_clipped.nc dummy.nc"))
+    system(stringr::str_glue("cdo aexpr,'{expr}' raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if expr application failed
     if (!file.exists("dummy.nc")) {
       stop("error: problem applying expr. Considering setting cdo_output=TRUE and rerunning.")
