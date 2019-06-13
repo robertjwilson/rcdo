@@ -8,6 +8,7 @@
 #' @param expr This is a cdo expression to apply to the merged files.
 #' @param remap_point This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
+#' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
 #' @param cdo_output Set to TRUE if you want to see the cdo output
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @param ... Arguments to be sent to nc_remap.
@@ -27,7 +28,7 @@
 
 #' nc_merge_remap(ff_list, coords = uk_coords, cdo_output = TRUE)
 
-nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, cdo_output = FALSE, overwrite = FALSE, ...) {
+nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, zip_file = FALSE, cdo_output = FALSE, overwrite = FALSE, ...) {
   if (remap_point %nin% c("pre", "post")) {
     stop(stringr::str_glue("error: remap_point = {remap_point} is not valid"))
   }
@@ -129,7 +130,10 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
   }
 
   # if out_file is given, save the merged nc file to this
-
+  # zip the file if requested
+  if (zip_file) {
+    nc_zip("merged.nc", overwrite = TRUE)
+  }
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)
 

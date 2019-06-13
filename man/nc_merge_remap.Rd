@@ -5,8 +5,8 @@
 \title{merge and remap a list of ncdf files}
 \usage{
 nc_merge_remap(ff_list, merge = "merge", expr = NULL,
-  remap_point = "pre", out_file = NULL, cdo_output = TRUE,
-  overwrite = FALSE, ...)
+  remap_point = "pre", out_file = NULL, zip_file = FALSE,
+  cdo_output = FALSE, overwrite = FALSE, ...)
 }
 \arguments{
 \item{ff_list}{This is a character vector of files to merge}
@@ -18,6 +18,8 @@ nc_merge_remap(ff_list, merge = "merge", expr = NULL,
 \item{remap_point}{This is the remap_point. Set to "pre" if you want to remap the files before merging, or "post" if you want to remap post-merging. The default is pre as this insures against horizontal grids being slightly different.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
+
+\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
 
 \item{cdo_output}{Set to TRUE if you want to see the cdo output}
 
