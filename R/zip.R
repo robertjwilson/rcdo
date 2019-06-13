@@ -16,7 +16,7 @@ nc_zip <- function(ff, out_file = ff, overwrite = FALSE) {
   }
 
   # create a temp file for the cdo zipping process
-  dummy_zip <- str_c(tempfile(), ".nc")
+  dummy_zip <- stringr::str_c(tempfile(), ".nc")
 
   # zip the file
   system(stringr::str_glue("cdo -f nc4 -z zip_9 copy {ff} {dummy_zip}"), ignore.stdout = TRUE, ignore.stderr = TRUE)
