@@ -17,6 +17,7 @@
 #' @param years Months you want. c(year_1, year_2,...)
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
+#' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @return data frame or netcdf file.
 #' @export
@@ -24,19 +25,19 @@
 # need an option for cacheing results...
 
 #' @examples
-#' 
+#'
 #' # Clipping data from the NOAA World Ocean Atlas sample file.
 #' ff <- system.file("extdata", "woa18_decav_t01_01.nc", package = "rcdo")
-#' 
+#'
 #' # clip to a specific depth range using vert_range
-#' 
+#'
 #' nc_clip(ff, vert_range = c(1, 5))
-#' 
+#'
 #' # clip to a specific longitude and latitude box
 #' # Clipping to the region around the UK
-#' 
+#'
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
-nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE) {
+nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, zip_file = FALSE, overwrite = FALSE) {
 
   # check that the vars given are actually in the file
   if (!is.null(vars)) {
@@ -241,8 +242,14 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     return(nc_grid)
   }
   # save the file, if that's what you chose to do
-  # change the working directory back to the original
 
+  # zip the file if requested
+  if (zip_file) {
+    system(stringr::str_glue("cdo -f nc4 -z zip_9 copy raw_clipped.nc dummy.nc"))
+    file.rename("dummy.nc", "raw_clipped.nc")
+  }
+
+  # change the working directory back to the original
   setwd(init_dir)
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
