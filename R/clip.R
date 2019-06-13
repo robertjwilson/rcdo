@@ -38,6 +38,9 @@
 #'
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, zip_file = FALSE, overwrite = FALSE) {
+  if (!file_valid(ff)) {
+    stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+  }
 
   # check that the vars given are actually in the file
   if (!is.null(vars)) {
@@ -49,8 +52,20 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     }
   }
 
-  if (!file_valid(ff)) {
-    stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
+  # check the lon and lat range validity
+
+  if (!is.numeric(lon_range) | !is.numeric(lat_range)) {
+    stop("lon or lat ranges are not numeric")
+  }
+  if (length(lon_range) != 2 | length(lat_range) != 2) {
+    stop("lon or lat range is not a 2 value numeric")
+  }
+
+  if (lon_range[1] > lon_range[2]) {
+    stop("lon_range is not valid")
+  }
+  if (lat_range[1] > lat_range[2]) {
+    stop("lat_range is not valid")
   }
 
   # check if vert_range is valid
