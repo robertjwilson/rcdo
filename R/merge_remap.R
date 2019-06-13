@@ -27,7 +27,7 @@
 
 #' nc_merge_remap(ff_list, coords = uk_coords, cdo_output = TRUE)
 
-nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, cdo_output = TRUE, overwrite = FALSE, ...) {
+nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = "pre", out_file = NULL, cdo_output = FALSE, overwrite = FALSE, ...) {
   if (remap_point %nin% c("pre", "post")) {
     stop(stringr::str_glue("error: remap_point = {remap_point} is not valid"))
   }
@@ -84,7 +84,7 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
 
   ens_string <- stringr::str_flatten(new_ens, collapse = " ")
 
-  system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"))
+  system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"), ignore.stderr = (cdo_output == FALSE))
 
   # throw an error message if merging fails
 
@@ -98,7 +98,7 @@ nc_merge_remap <- function(ff_list, merge = "merge", expr = NULL, remap_point = 
   if (!is.null(expr)) {
     expr <- stringr::str_replace_all(expr, " ", "")
     print(expr)
-    system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
+    system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
 
     # throw an error message if apply expr fails
 
