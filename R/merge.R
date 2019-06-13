@@ -65,7 +65,7 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
 
   ens_string <- stringr::str_flatten(new_ens, collapse = " ")
 
-  system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"))
+  system(stringr::str_glue("cdo {merge} {ens_string} merged.nc"), ignore.stderr = (cdo_output == FALSE))
 
   # throw an error message if merging fails
 
@@ -79,7 +79,7 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
   if (!is.null(expr)) {
     expr <- stringr::str_replace_all(expr, " ", "")
     print(expr)
-    system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"))
+    system(stringr::str_glue("cdo aexpr,'{expr}' merged.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw and error message if this fails
     if (!file.exists("dummy.nc")) {
       stop("error: problem apply expr to merged netcdf files. Please check expr and consider setting cdo_output = TRUE and rerun")
