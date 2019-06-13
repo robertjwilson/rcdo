@@ -138,7 +138,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
 
   if (!is.null(expr)) {
     expr <- stringr::str_replace_all(expr, " ", "")
-    print(expr)
     system(stringr::str_glue("cdo aexpr,'{expr}' raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if expr application failed
     if (!file.exists("dummy.nc")) {
@@ -157,7 +156,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
-    print("converting to a data frame")
     nc_grid <- nc_read("raw_clipped.nc")
     nc_grid <- nc_grid %>%
       dplyr::inner_join(max_depths)
