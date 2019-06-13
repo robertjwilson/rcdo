@@ -259,8 +259,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
   # zip the file if requested
   if (zip_file) {
-    system(stringr::str_glue("cdo -f nc4 -z zip_9 copy raw_clipped.nc dummy.nc"))
-    file.rename("dummy.nc", "raw_clipped.nc")
+    nc_zip("raw_clipped.nc", overwrite = TRUE)
   }
 
   # change the working directory back to the original
