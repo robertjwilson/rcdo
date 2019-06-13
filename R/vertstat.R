@@ -158,7 +158,7 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   if (is.null(out_file)) {
     nc_grid <- nc_read("raw_clipped.nc")
     nc_grid <- nc_grid %>%
-      dplyr::inner_join(max_depths)
+      dplyr::inner_join(max_depths, by = c("Longitude", "Latitude"))
 
     # remove the temporary files created
     setwd(temp_dir)
