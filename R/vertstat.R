@@ -173,7 +173,6 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   # zip the file if requested
   if (zip_file) {
     nc_zip("raw_clipped.nc", overwrite = TRUE)
-    print("working")
   }
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
