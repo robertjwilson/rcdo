@@ -5,7 +5,7 @@
 \title{Calculate vertical mean from a netcdf file.}
 \usage{
 nc_vertmean(ff, vars = NULL, vert_scale = NULL, coords = NULL,
-  expr = NULL, na_value = NULL, out_file = NULL,
+  expr = NULL, na_value = NULL, out_file = NULL, zip_file = FALSE,
   cdo_output = FALSE, overwrite = FALSE, ...)
 }
 \arguments{
@@ -22,6 +22,8 @@ nc_vertmean(ff, vars = NULL, vert_scale = NULL, coords = NULL,
 \item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
+
+\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 

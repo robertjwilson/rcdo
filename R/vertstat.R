@@ -1,6 +1,6 @@
 
 
-nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, cdo_output = FALSE, overwrite = FALSE, ...) {
+nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coords = NULL, expr = NULL, na_value = NULL, out_file = NULL, zip_file = FALSE, cdo_output = FALSE, overwrite = FALSE, ...) {
 
   # check that the vars given are actually in the file
   if (!is.null(vars)) {
@@ -170,7 +170,11 @@ nc_vertstat <- function(metric = NULL, ff, vars = NULL, vert_scale = NULL, coord
   }
   # save the file, if that's what you chose to do
   # change the working directory back to the original
-
+  # zip the file if requested
+  if (zip_file) {
+    nc_zip("raw_clipped.nc", overwrite = TRUE)
+    print("working")
+  }
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
 

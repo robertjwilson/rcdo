@@ -5,8 +5,8 @@
 \title{remap a ncdf file}
 \usage{
 nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
-  out_file = NULL, cdo_output = FALSE, remapping = "bil",
-  na_value = NULL, overwrite = FALSE, ...)
+  out_file = NULL, zip_file = FALSE, cdo_output = FALSE,
+  remapping = "bil", na_value = NULL, overwrite = FALSE, ...)
 }
 \arguments{
 \item{ff}{This is the file to regrid.}
@@ -16,6 +16,8 @@ nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
 \item{coords}{A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
+
+\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
