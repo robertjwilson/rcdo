@@ -73,7 +73,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     }
   }
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), intern = TRUE)) > 1) {
+  if (as.integer(system(stringr::str_c("cdo ngrids ", ff), ignore.stderr = (cdo_output == FALSE), intern = TRUE)) > 1) {
     warning("warning: there is more than one horizontal grid in the netcdf file. Please check the output!")
   }
 
@@ -132,7 +132,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   # clip to the box
 
   # if(is.null(vars))
-  system(stringr::str_c("cdo sellonlatbox,", stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = TRUE)
+  system(stringr::str_c("cdo sellonlatbox,", stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   # throw an error if this did not work
   if (!file.exists("dummy.nc")) {
     stop("error: cdo cannot subselect the lonlat box. Set cdo_output = TRUE and inspect output.")
@@ -158,7 +158,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     }
 
 
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the dates. Set cdo_output = TRUE and inspect output.")
     }
@@ -171,7 +171,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: no depths within the depth range selected")
     }
 
-    system(stringr::str_c("cdo sellevel,", stringr::str_flatten(depths, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo sellevel,", stringr::str_flatten(depths, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the vertical levels. Set cdo_output = TRUE and inspect output.")
     }
@@ -179,7 +179,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   }
 
   if (!is.null(months)) {
-    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
+    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -194,7 +194,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: check months supplied")
     }
 
-    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the months. Set cdo_output = TRUE and inspect output.")
     }
@@ -202,7 +202,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   }
 
   if (!is.null(years)) {
-    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = TRUE) %>%
+    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -216,7 +216,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     if (num_years == 0) {
       stop("error: check years supplied")
     }
-    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = TRUE)
+    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the years. Set cdo_output = TRUE and inspect output.")
     }
