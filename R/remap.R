@@ -10,10 +10,11 @@
 #' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
 #' @param coords A 2 column matrix or data frame of the form (longitude, latitude) with coordinates for regridding. This can be regular or irregular. The function will calculate which it is.
-#' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param remapping The type of remapping. bil = bilinear. nn = nearest neighbour. dis = distance weighted.
 #' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
 #' @param cdo_output set to TRUE if you want to see the cdo output
+#' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
+#' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @param ... optional arguments to be sent to nc_clip if you need to clip prior to remapping.#'
 #' @return data frame or netcdf file.
@@ -31,7 +32,7 @@
 #'
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
-nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
+nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, zip_file = FALSE, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -158,8 +159,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
 
   	# zip the file up if we need to save the output as netcdf
-  	if(!is.null(out_file))
-    system(stringr::str_c("cdo -z zip remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE)) else
+  # 	if(!is.null(out_file))
+  #   system(stringr::str_c("cdo -z zip remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE)) else
     system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     # throw error if vertical interpolation failed
     if (!file.exists("dummy.nc")) {
@@ -185,6 +186,10 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   # save the file, if that's what you chose to do
   # change the working directory back to the original
 
+  # zip the file if requested
+  if (zip_file) {
+    nc_zip("raw_clipped.nc", overwrite = TRUE)
+  }
   setwd(init_dir)
 
   file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
