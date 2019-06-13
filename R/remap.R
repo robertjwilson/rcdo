@@ -80,7 +80,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # set the missing value, if it has not been set already
   if (!is.null(na_value)) {
-    system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"))
+    system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     file.rename("dummy.nc", "raw.nc")
   }
 
