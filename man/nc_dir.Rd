@@ -4,12 +4,12 @@
 \alias{nc_dir}
 \title{search netcdf files in folder and list variables in each file}
 \usage{
-nc_dir(directory = getwd(), recursive = TRUE, print = FALSE)
+nc_dir(directory = getwd(), recurse = TRUE, print = FALSE)
 }
 \arguments{
 \item{directory}{This is the directory to check.}
 
-\item{recursive}{Do you want to recursive look through a directory?}
+\item{recurse}{Do you want to recursive look through a directory?}
 
 \item{print}{Do you want to print the name of files as you check them?}
 }
