@@ -7,6 +7,7 @@
 #' @param merge This is the merge type. Use "merge" to combine files, "mergetime" to merge based on time.
 #' @param expr This is a cdo expression to apply to the merged files.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
+#' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @return data frame or netcdf file.
@@ -21,7 +22,7 @@
 #' coords <- expand.grid(Longitude = -39.5:10.5, Latitude = 40.5:69.5)
 #' nc_merge(ff_list, cdo_output = TRUE)
 
-nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo_output = TRUE, overwrite = FALSE) {
+nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, zip_file = FALSE, cdo_output = TRUE, overwrite = FALSE) {
 
   # loop through the files
   for (ff in ff_list)
@@ -101,6 +102,10 @@ nc_merge <- function(ff_list, merge = "merge", expr = NULL, out_file = NULL, cdo
   }
 
   # if out_file is given, save the merged nc file to this
+  # zip the file if requested
+  if (zip_file) {
+    nc_zip("merged.nc", overwrite = TRUE)
+  }
 
   setwd(init_dir)
   file.copy(stringr::str_c(temp_dir, "/merged.nc"), out_file, overwrite = overwrite)

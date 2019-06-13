@@ -19,6 +19,8 @@ nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
 \item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
+
+\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
 }
 \value{
 data frame or netcdf file.
