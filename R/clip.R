@@ -239,7 +239,6 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   }
 
   if (is.null(out_file)) {
-    print("converting to a data frame")
     nc_grid <- nc_read("raw_clipped.nc")
 
     # if there is only one depth layer, depth will not be in the data frame. It needs to be added back in
