@@ -8,21 +8,19 @@ nc_ymonstat(ff, stat = "mean", vars = NULL, out_file = NULL,
   zip_file = FALSE, cdo_output = FALSE, overwrite = FALSE, ...)
 }
 \arguments{
-\item{ff}{This is the file to regrid.}
+\item{ff}{Target netcdf file}
 
-\item{vars}{Select the variables you want to regrid. If this is not given, all variables will be regridded.}
+\item{vars}{Select the variables you want. If this is not given, stats will be calculated for all variables.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
-\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
+\item{zip_file}{Do you want any output file to be zipped to save space? Default is FALSE.}
 
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
 \item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
 
 \item{...}{optional arguments to be sent to nc_remap if you need to remap the netcdf prior to calculate the stat}
-
-\item{na_value}{This is a value in the raw netcdf file that needs to be treated as an na.#'}
 }
 \value{
 data frame or netcdf file.

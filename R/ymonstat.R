@@ -1,12 +1,11 @@
 
 #' @title Multi-year monthly statistical values from a netcdf file
 #' @description This function allows you to calculate climatological monthly statistics. Data must be monthly
-#' @param ff This is the file to regrid.
-#' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.
-#' @param na_value This is a value in the raw netcdf file that needs to be treated as an na.#'
+#' @param ff Target netcdf file
+#' @param vars Select the variables you want. If this is not given, stats will be calculated for all variables.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
-#' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
+#' @param zip_file Do you want any output file to be zipped to save space? Default is FALSE.
 #' @param overwrite Do you want to overwrite out_file if it exists? Defaults to FALSE
 #' @param ... optional arguments to be sent to nc_remap if you need to remap the netcdf prior to calculate the stat
 #' @return data frame or netcdf file.
