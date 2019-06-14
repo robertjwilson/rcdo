@@ -1,9 +1,6 @@
 
-# to be added: year range options
 # figure out how to handle very large files. Use gebco bath
 # add a check whether there are any vertical depths in the file
-
-
 
 #' @title remap a ncdf file
 #' @description This function allows you to remap a netcdf horizontally and vertically to any set of latlon coordinates.
@@ -200,3 +197,4 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     unlink(temp_dir, recursive = TRUE)
   }
 }
+
