@@ -1,4 +1,5 @@
 
+# possibly remove the date range option. Is it useful?
 
 # to be added
 # code to work out if the date ranges are invalid
@@ -38,6 +39,13 @@
 #'
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, zip_file = FALSE, overwrite = FALSE) {
+
+  # log the original file and get the full system path
+  ff_orig <- normalizePath(ff)
+
+  # holding nc. This is used as the file name for any netcdf manipulations
+  holding_nc <- ff_orig
+
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -100,8 +108,6 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   # Create a temporary directory and move the file we are manipulating to it...
   temp_dir <- random_temp()
 
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
-
   setwd(temp_dir)
   if (getwd() == init_dir) {
     stop("error: there was a problem changing the directory")
@@ -114,49 +120,42 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   # add "/" to the end of the temporary directory, for safety
   temp_dir <- stringr::str_c(temp_dir, "/")
 
-  # remove anything from the temporary folder to make sure there are no clashes etc.
 
-  if (file.exists(stringr::str_c(temp_dir, "/raw_clipped.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/raw_clipped.nc"))
-  }
+  # check if the raw file is compatible with cdo. If not, just regrid it
 
-  if (file.exists(stringr::str_c(temp_dir, "/dummy.nc"))) {
-    file.remove(stringr::str_c(temp_dir, "/dummy.nc"))
-  }
-  # add missing grid info if it's coming in as generic or something cdo cannot handle.
-
-  add_missing_grid("raw.nc", vars = vars)
-
-  # If this does not make the file cdo compatible, then we need to throw an error
-
-  if (!cdo_compatible("raw.nc")) {
-    stop("error: file is not cdo compatible, even after trying to fix the coordinates")
+  if (!cdo_compatible(ff_orig)) {
+    file.copy(ff_orig, "temp.nc")
+    holding_nc <- "temp.nc"
+    add_missing_grid(holding_nc, vars)
   }
 
   # copy the file to the temporary
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
-    system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo selname,{stringr::str_flatten(vars, ", ")} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect vars chosen. Set cdo_output = TRUE and inspect output.")
     }
-    file.rename("dummy.nc", "raw.nc")
+    file.rename("dummy.nc", holding_nc)
   }
 
   # clip to the box
-
+  lat_box <- stringr::str_flatten(c(lon_range, lat_range), collapse = ",")
   # if(is.null(vars))
-  system(stringr::str_c("cdo sellonlatbox,", stringr::str_flatten(c(lon_range, lat_range), collapse = ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  system(stringr::str_glue("cdo sellonlatbox,{lat_box}, {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   # throw an error if this did not work
   if (!file.exists("dummy.nc")) {
     stop("error: cdo cannot subselect the lonlat box. Set cdo_output = TRUE and inspect output.")
   }
+  if (holding_nc == ff_orig) {
+    holding_nc <- "temp.nc"
+  }
 
-  file.rename("dummy.nc", "raw_clipped.nc")
+  file.rename("dummy.nc", holding_nc)
 
 
-  depths <- system(stringr::str_c("cdo showlevel ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+  depths <- system(stringr::str_c("cdo showlevel ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
     stringr::str_split(" ") %>%
     .[[1]] %>%
     as.numeric()
@@ -173,11 +172,14 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     }
 
 
-    system(stringr::str_c("cdo seldate,", min_date, ",", max_date, " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_c("cdo seldate,{min_date},{max_date} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the dates. Set cdo_output = TRUE and inspect output.")
     }
-    file.rename("dummy.nc", "raw_clipped.nc")
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+    file.rename("dummy.nc", holding_nc)
   }
 
 
@@ -186,15 +188,21 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: no depths within the depth range selected")
     }
 
-    system(stringr::str_c("cdo sellevel,", stringr::str_flatten(depths, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    levels_selected <- stringr::str_flatten(depths, ",")
+    system(stringr::str_glue("cdo sellevel,{levels_selected} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the vertical levels. Set cdo_output = TRUE and inspect output.")
     }
-    file.rename("dummy.nc", "raw_clipped.nc")
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
+    file.rename("dummy.nc", holding_nc)
   }
 
   if (!is.null(months)) {
-    file_months <- system(stringr::str_c("cdo showmon ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+    file_months <- system(stringr::str_c("cdo showmon ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -209,15 +217,21 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: check months supplied")
     }
 
-    system(stringr::str_c("cdo selmonth,", stringr::str_flatten(months, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    month_choice <- stringr::str_flatten(months, ",")
+    system(stringr::str_glue("cdo selmonth,{month_choice} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the months. Set cdo_output = TRUE and inspect output.")
     }
-    file.rename("dummy.nc", "raw_clipped.nc")
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
+    file.rename("dummy.nc", holding_nc)
   }
 
   if (!is.null(years)) {
-    file_years <- system(stringr::str_c("cdo showyear ", "raw_clipped.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+    file_years <- system(stringr::str_c("cdo showyear ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
       stringr::str_split(" ") %>%
       .[[1]] %>%
       as.integer()
@@ -231,15 +245,21 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     if (num_years == 0) {
       stop("error: check years supplied")
     }
-    system(stringr::str_c("cdo selyear,", stringr::str_flatten(years, ","), " raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    year_choice <- stringr::str_flatten(years, ",")
+    system(stringr::str_glue("cdo selyear,{year_choice} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect the years. Set cdo_output = TRUE and inspect output.")
     }
-    file.rename("dummy.nc", "raw_clipped.nc")
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
+    file.rename("dummy.nc", holding_nc)
   }
 
   if (is.null(out_file)) {
-    nc_grid <- nc_read("raw_clipped.nc")
+    nc_grid <- nc_read(holding_nc)
 
     # if there is only one depth layer, depth will not be in the data frame. It needs to be added back in
     if (length(depths) == 1) {
@@ -259,13 +279,13 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
   # zip the file if requested
   if (zip_file) {
-    nc_zip("raw_clipped.nc", overwrite = TRUE)
+    nc_zip(holding_nc, overwrite = TRUE)
   }
 
   # change the working directory back to the original
   setwd(init_dir)
 
-  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
+  file.copy(stringr::str_c(temp_dir, holding_nc), out_file, overwrite = overwrite)
 
   # remove the temporary files created
   setwd(temp_dir)
