@@ -5,7 +5,7 @@
 \title{merge netcdf files}
 \usage{
 nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
-  cdo_output = TRUE, overwrite = FALSE)
+  zip_file = FALSE, cdo_output = TRUE, overwrite = FALSE)
 }
 \arguments{
 \item{ff_list}{This is a character vector containing the files to merge}
@@ -16,11 +16,11 @@ nc_merge(ff_list, merge = "merge", expr = NULL, out_file = NULL,
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
+\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
+
 \item{cdo_output}{set to TRUE if you want to see the cdo output}
 
 \item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
-
-\item{zip_file}{Do you want any output file to be zipped to save space. Default is FALSE.}
 }
 \value{
 data frame or netcdf file.
