@@ -1,4 +1,7 @@
 
+# remap version that doesn't copy files
+
+
 # figure out how to handle very large files. Use gebco bath
 # add a check whether there are any vertical depths in the file
 
@@ -30,6 +33,13 @@
 #' # remapping to 1 degree resolution for 5, 50 and 100 metres in the region around the uk
 #' nc_remap(ff, vars = "t_an", coords = uk_coords, vert_depths = c(5, 50, 100))
 nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_file = NULL, zip_file = FALSE, cdo_output = FALSE, remapping = "bil", na_value = NULL, overwrite = FALSE, ...) {
+
+  # log the original file and get the full system path
+  ff_orig <- normalizePath(ff)
+
+  # holding nc. This is used as the file name for any netcdf manipulations
+  holding_nc <- ff_orig
+
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -48,22 +58,18 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   }
 
   # take note of the working directory, so that it can be reset to this on exit
-
   init_dir <- getwd()
   on.exit(setwd(init_dir))
 
-  # Create a temporary directory and move the file we are manipulating to it...
+  # Create a temporary directory for manipulating the files
   temp_dir <- random_temp()
 
-  # copy the file to the temporary
-
-  file.copy(ff, stringr::str_c(temp_dir, "/raw.nc"), overwrite = TRUE)
   setwd(temp_dir)
 
+  # the following is ultra-safe for preventing a panic attack
   if (getwd() == init_dir) {
     stop("error: there was a problem changing the directory")
   }
-
   if (getwd() != temp_dir) {
     stop("error: there was a problem changing the directory")
   }
@@ -72,60 +78,61 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # check if the raw file is compatible with cdo. If not, just regrid it
 
-  if (!cdo_compatible("raw.nc")) {
-    add_missing_grid("raw.nc", vars)
+  if (!cdo_compatible(ff_orig)) {
+    file.copy(ff_orig, "temp.nc")
+    holding_nc <- "temp.nc"
+    add_missing_grid(holding_nc, vars)
   }
 
   # set the missing value, if it has not been set already
   if (!is.null(na_value)) {
-    system(stringr::str_glue("cdo -setmissval,{na_value} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
-    file.rename("dummy.nc", "raw.nc")
+
+    system(stringr::str_glue("cdo -setmissval,{na_value} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
+    file.rename("dummy.nc", holding_nc)
   }
 
   # check the the number of grids..
 
-  if (as.integer(system(stringr::str_c("cdo ngrids ", "raw.nc"), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
+  if (as.integer(system(stringr::str_c("cdo ngrids ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE))) > 1) {
     warning("warning: there is more than one horizontal grid in the netcdf file.  Please check the outputs")
   }
-
 
   # Generate mygrid for remapping
   if (!is.null(coords)) {
     generate_grid(coords)
   }
 
-
-  # to be added
-  # check the validity of the variables selected
-
-  # if(!is.null(vars))
-  # 	var_validity("raw.nc", vars)
-  #
-  # if(is.null(vars))
-  # 	var_validity("raw.nc", nc_variables("raw.nc"))
-
-
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
-    system(stringr::str_c("cdo selname,", stringr::str_flatten(vars, ","), " raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo selname,{stringr::str_flatten(vars, ", ")} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
     # throw error if selecting vars fails
     if (!file.exists("dummy.nc")) {
       stop("error: problem subselecting vars from {ff}. Please consider setting cdo_output = TRUE and re-running")
     }
-    file.rename("dummy.nc", "raw.nc")
+    file.rename("dummy.nc", holding_nc)
   }
 
   # it is possible there are no vertical depths in the file. In this case we throw an error message
   vertical_remap <- TRUE
-  num_depths <- nrow(nc_depths("raw.nc"))
-	if(!is.null(vert_depths))
-  if (num_depths < 2) {
-  	warning("There are none or one vertical depths in the file. Vertical interpolation not carried out.")
-  	vertical_remap <- FALSE
+  num_depths <- nrow(nc_depths(holding_nc))
+  if (!is.null(vert_depths)) {
+    if (num_depths < 2) {
+      warning("There are none or one vertical depths in the file. Vertical interpolation not carried out.")
+      vertical_remap <- FALSE
+    }
   }
 
   if (!is.null(vert_depths) & vertical_remap) {
-    available_depths <- nc_depths("raw.nc")
+    available_depths <- nc_depths(holding_nc)
     if (min(vert_depths) < min(available_depths$Depth)) {
       stop("error: minimum depth supplied is too low")
     }
@@ -135,42 +142,54 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     }
 
     vert_depths <- stringr::str_flatten(vert_depths, ",")
-    system(stringr::str_c("cdo intlevel,", vert_depths, " ", "raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo intlevel,{vert_depths}, {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
     # throw error if vertical interpolation failed
     if (!file.exists("dummy.nc")) {
       stop("error: problem vertically interpolating file. Please consider setting cdo_output = TRUE and re-running")
     }
 
-    file.rename("dummy.nc", "raw.nc")
+    file.rename("dummy.nc", holding_nc)
   }
-
-  file.rename("raw.nc", "raw_clipped.nc")
 
   # clip the file
   if (length(list(...)) >= 1) {
-    nc_clip("raw_clipped.nc", ..., out_file = "dummy.nc")
-    file.rename("dummy.nc", "raw_clipped.nc")
+    nc_clip(holding_nc, ..., out_file = "dummy.nc")
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
+    file.rename("dummy.nc", holding_nc)
   }
 
   if (!is.null(coords)) {
-    system(stringr::str_c("cdo gen", remapping, ",mygrid raw_clipped.nc remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
+  	# generate the weights for the horizontal remapping
+    system(stringr::str_c("cdo gen{remapping},mygrid {holding_nc} remapweights.nc"), ignore.stderr = (cdo_output == FALSE))
 
-  	# zip the file up if we need to save the output as netcdf
-  # 	if(!is.null(out_file))
-  #   system(stringr::str_c("cdo -z zip remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE)) else
-    system(stringr::str_c("cdo remap", remapping, ",mygrid raw_clipped.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+  	# do the horizontal remapping
+    system(stringr::str_glue("cdo remap{remapping},mygrid {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+
+    if (holding_nc == ff_orig) {
+      holding_nc <- "temp.nc"
+    }
+
     # throw error if vertical interpolation failed
     if (!file.exists("dummy.nc")) {
       stop("error: problem horizontally remapping data. Please consider setting cdo_output = TRUE and re-running")
     }
-    file.rename("dummy.nc", "raw_clipped.nc")
+    file.rename("dummy.nc", holding_nc)
   }
 
   # at this stage, we need to output a data frame if asked
 
   if (is.null(out_file)) {
-    nc_grid <- nc_read("raw_clipped.nc")
-    # remove the files that have been generated
+    nc_grid <- nc_read(holding_nc)
+    # remove the temporary files that have been generated
     # this checks how many files are in the folder, and makes sure it is less than 6
     # If it's greater than 5 something has gone wrong
     if (length(dir(temp_dir)) < 6 & temp_dir != init_dir) {
@@ -185,11 +204,11 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # zip the file if requested
   if (zip_file) {
-    nc_zip("raw_clipped.nc", overwrite = TRUE)
+    nc_zip(holding_nc, overwrite = TRUE)
   }
   setwd(init_dir)
 
-  file.copy(stringr::str_c(temp_dir, "/raw_clipped.nc"), out_file, overwrite = overwrite)
+  file.copy(stringr::str_c(temp_dir, holding_nc), out_file, overwrite = overwrite)
 
   # remove the temporary files created
   setwd(temp_dir)
