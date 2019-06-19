@@ -18,7 +18,7 @@
 #' @description This is a quick and easy way to read a netcdf file to a data frame. It will read all or a specified list of variables into a data frame. This requires that grid details are clear in the netcdf file, so in some rare cases there will be an error message.
 #' @param ff This is the file to read.
 #' @param vars A list of variables you want to read in. Character vector. Everything is read in if this is empty.
-###' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
+#' @param na_rm Do you want rows with nas to be removed from output? Default is FALSE
 #' @param cdo_output Do you want to show the cdo output? Set to TRUE in case you want to troubleshoot errors.
 #' @param dim_check The number of data points in the final data frame that will ask to continue. Set to NULL if you don't want to check.
 #' @export
@@ -35,7 +35,7 @@
 #' # If we only want to read in specific fields, we can use vars
 #'
 #' nc_read(ff, vars = "t_an")
-nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
+nc_read <- function(ff, vars = NULL, na_rm = FALSE, cdo_output = FALSE, dim_check = 15e7) {
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
   }
@@ -251,7 +251,9 @@ nc_read <- function(ff, vars = NULL, cdo_output = FALSE, dim_check = 15e7) {
   # file_date <- nc_dates(ff)$Date
   nc_grid <- nc_grid %>%
   	dplyr::mutate(Time = file_date)
-
   }
+  if(na_rm)
+    nc_grid <- nc_grid %>%
+      tidyr::drop_na()
   return(nc_grid)
 }
