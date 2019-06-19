@@ -127,9 +127,6 @@ generate_grid <- function(coords) {
 
   # we now have the grid type. Time to create the grid
 
-  grid_type
-
-
   if (grid_type == "unstructured") {
     coords <- as.data.frame(coords)
     names(coords) <- c("Longitude", "Latitude")
