@@ -95,7 +95,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: years is not numeric")
   }
 
-  if(!is.integer(years))
+  if(!is.integer(years) & !is.null(years))
     years <- as.integer(years)
 
 
@@ -179,11 +179,12 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
   file.rename("dummy.nc", holding_nc)
 
+  # depths <- system(stringr::str_c("cdo showlevel ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
+  #   stringr::str_split(" ") %>%
+  #   .[[1]] %>%
+  #   as.numeric()
+  depths <- nc_depths(ff)$Depth
 
-  depths <- system(stringr::str_c("cdo showlevel ", holding_nc), intern = TRUE, ignore.stderr = (cdo_output == FALSE)) %>%
-    stringr::str_split(" ") %>%
-    .[[1]] %>%
-    as.numeric()
 
   depths <- depths[complete.cases(depths)]
   depths <- depths[depths <= vert_range[2] & depths >= vert_range[1]]
