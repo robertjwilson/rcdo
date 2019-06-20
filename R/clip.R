@@ -88,6 +88,21 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     }
   }
 
+  # check that months are valid
+
+  if(!is.null(months)){
+    if(!is.numeric(months))
+      stop("error: months is not numeric")
+
+    valid_months <- 1:12
+    if((sum(months %in% valid_months) == length(months)) == FALSE)
+      stop("error: months supplied are not actual months")
+
+  }
+
+
+
+
   # check that vars is a chracter stringr
 
   if (!is.null(vars)) {
