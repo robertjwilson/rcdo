@@ -14,8 +14,8 @@
 #' @param lat_range latitude range. c(min_latitude, max_latitude).
 #' @param vert_range This is the range of depths for vertical clipping, if wanted. c(min_depth, max_depth)
 #' @param date_range This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.
-#' @param months Months you want. c(month_1, month_2,...)
-#' @param years Months you want. c(year_1, year_2,...)
+#' @param months Months you want. c(month_1, month_2,...). Coerced to integer if numeric.
+#' @param years Months you want. c(year_1, year_2,...). Coerced to integer if numeric.
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param zip_file Do you want any output file to be zipped to save space. Default is FALSE.
@@ -95,11 +95,18 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
       stop("error: years is not numeric")
   }
 
+  if(!is.integer(years))
+    years <- as.integer(years)
+
+
   # check that months are valid
 
   if(!is.null(months)){
     if(!is.numeric(months))
       stop("error: months is not numeric")
+
+    if(!is.integer(months))
+      months <- as.integer(months)
 
     valid_months <- 1:12
     if((sum(months %in% valid_months) == length(months)) == FALSE)

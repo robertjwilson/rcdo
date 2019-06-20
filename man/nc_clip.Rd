@@ -22,9 +22,9 @@ nc_clip(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90,
 
 \item{date_range}{This is the range of dates you want. c(date_min, date_max). "day/month/year" character string format.}
 
-\item{months}{Months you want. c(month_1, month_2,...)}
+\item{months}{Months you want. c(month_1, month_2,...). Coerced to integer if numeric.}
 
-\item{years}{Months you want. c(year_1, year_2,...)}
+\item{years}{Months you want. c(year_1, year_2,...). Coerced to integer if numeric.}
 
 \item{out_file}{The name of the file output. If this is not stated, a data frame will be the output.}
 
