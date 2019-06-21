@@ -1,9 +1,12 @@
 
+# years should probably be a default option...
+
 #' @title Calculates a climatology from a netcdf file
 #' @description This function allows you to calculate climatological monthly statistics. Data must be monthly
 #' @param ff Target netcdf file
 #' @param period Type of climatology. Must be one of yearly, monthly or seasonal.
 #' @param vars Select the variables you want. If this is not given, stats will be calculated for all variables.
+#' @param stat Statistic you want calculated. Options are min, max, range, sum, mean, var, std. Default is mean. Only min, max and mean allowed for yearly currently.
 #' @param cdo_output set to TRUE if you want to see the cdo output
 #' @param out_file The name of the file output. If this is not stated, a data frame will be the output.
 #' @param zip_file Do you want any output file to be zipped to save space? Default is FALSE.
@@ -12,7 +15,7 @@
 #' @return data frame or netcdf file.
 #' @export
 
-nc_climatology <- function(ff, period = "seasonal", vars = NULL, out_file = NULL, zip_file = FALSE, cdo_output = FALSE, overwrite = FALSE, ...) {
+nc_climatology <- function(ff, period = "seasonal", stat = "mean", vars = NULL, out_file = NULL, zip_file = FALSE, cdo_output = FALSE, overwrite = FALSE, ...) {
 
   # check that the period is valid
   # ...
@@ -21,6 +24,11 @@ nc_climatology <- function(ff, period = "seasonal", vars = NULL, out_file = NULL
     stop("Period supplied is not valid. It has to be one of monthly, yearly or seasonal")
   }
 
+  if(stat %nin% c("min", "max", "range", "sum", "mean", "var", "std"))
+    stop("stat supplied is not valid")
+
+  if(period == "yearly" & stat %nin% c("min", "max", "mean"))
+    stop("stat supplied is not valid")
 
   if (!file_valid(ff)) {
     stop(stringr::str_glue("error: {ff} does not exist or is not netcdf"))
@@ -86,22 +94,22 @@ nc_climatology <- function(ff, period = "seasonal", vars = NULL, out_file = NULL
   print(stringr::str_c("Stat calculated using the years: ", stringr::str_flatten(nc_years("raw.nc")$Year, " ")))
 
   if (period == "seasonal") {
-    system(stringr::str_glue("cdo yseasmean raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo yseas{stat} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   }
 
   if (period == "monthly") {
-    system(stringr::str_glue("cdo ymonmean raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo ymon{stat} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   }
 
   if (period == "yearly") {
-    system(stringr::str_glue("cdo ymonmean raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo ymon{stat} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
 
     if (!file.exists("dummy.nc")) {
       stop("error: problem calculating the climatology using cdo. Please consider setting cdo_output = TRUE and re-running")
     }
 
     file.rename("dummy.nc", "raw.nc")
-    system(stringr::str_glue("cdo yearmonmean raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    system(stringr::str_glue("cdo year{stat} raw.nc dummy.nc"), ignore.stderr = (cdo_output == FALSE))
   }
 
   if (!file.exists("dummy.nc")) {
@@ -171,3 +179,7 @@ nc_climatology <- function(ff, period = "seasonal", vars = NULL, out_file = NULL
     unlink(temp_dir, recursive = TRUE)
   }
 }
+
+
+
+
