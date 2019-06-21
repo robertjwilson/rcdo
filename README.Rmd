@@ -26,7 +26,7 @@ You can install the development version of rcdo using.
 devtools::install_github("r4ecology/rcdo", dependencies = TRUE)
 ```
 
-You will need to have Climate Data Operators installed to run rcdo. Visit https://code.mpimet.mpg.de/projects/cdo/files for download and installation instructions.
+You will need to have Climate Data Operators installed to run rcdo. Visit https://code.mpimet.mpg.de/projects/cdo/files for download and installation instructions. Note that the development version of rcdo is currently being developed using CDO Version 1.9.7. 
 
 Currently, the package has been tested for Linux computers. It will not work on Windows platforms, currently. But (buyer beware) it probably should work on Macs.
 
