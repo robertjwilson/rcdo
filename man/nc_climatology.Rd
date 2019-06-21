@@ -25,7 +25,7 @@ nc_climatology(ff, period = "seasonal", stat = "mean", vars = NULL,
 
 \item{overwrite}{Do you want to overwrite out_file if it exists? Defaults to FALSE}
 
-\item{...}{optional arguments to be sent to nc_remap if you need to remap the netcdf prior to calculate the stat}
+\item{...}{optional arguments to be sent to nc_remap if you need to remap the netcdf prior to calculating the stat}
 }
 \value{
 data frame or netcdf file.
