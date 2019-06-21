@@ -18,7 +18,7 @@ nc_years <- function(ff) {
   ff_dates <- system(stringr::str_c("cdo showtimestamp ", ff), intern = TRUE, ignore.stderr = TRUE) %>%
     stringr::str_split(" ") %>%
     .[[1]]
-  ff_years <- as.integer(str_sub(ff_dates[ff_dates != ""],1,4))
+  ff_years <- as.integer(stringr::str_sub(ff_dates[ff_dates != ""],1,4))
 
   dplyr::data_frame(Year = ff_years) %>%
     dplyr::distinct()
