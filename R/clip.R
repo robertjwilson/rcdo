@@ -105,7 +105,7 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     if(!is.numeric(months))
       stop("error: months is not numeric")
 
-    if(!is.integer(months))
+    if(!is.integer(months) )
       months <- as.integer(months)
 
     valid_months <- 1:12
@@ -183,11 +183,13 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
   #   stringr::str_split(" ") %>%
   #   .[[1]] %>%
   #   as.numeric()
-  depths <- nc_depths(ff)$Depth
+  if(!is.null(vert_range)){
+    depths <- nc_depths(ff)$Depth
 
 
-  depths <- depths[complete.cases(depths)]
-  depths <- depths[depths <= vert_range[2] & depths >= vert_range[1]]
+    depths <- depths[complete.cases(depths)]
+    depths <- depths[depths <= vert_range[2] & depths >= vert_range[1]]
+  }
 
   if (!is.null(date_range)) {
     min_date <- lubridate::dmy(date_range[1])
@@ -284,7 +286,11 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     file.rename("dummy.nc", holding_nc)
   }
 
+
   if (is.null(out_file)) {
+  # fix for the case when vert_range not supplied
+  if(is.null(vert_range))
+     depths = 0
     nc_grid <- nc_read(holding_nc)
 
     # if there is only one depth layer, depth will not be in the data frame. It needs to be added back in
