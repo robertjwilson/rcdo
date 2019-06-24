@@ -121,7 +121,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
     file.rename("dummy.nc", holding_nc)
   }
 
-  # it is possible there are no vertical depths in the file. In this case we throw an error message
+  # it is possible there are no vertical depths in the file. In this case we throw a warning message
   vertical_remap <- TRUE
   num_depths <- nrow(nc_depths(holding_nc))
   if (!is.null(vert_depths)) {
@@ -159,6 +159,7 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
   # clip the file
   if (length(list(...)) >= 1) {
     nc_clip(holding_nc, ..., out_file = "dummy.nc")
+
 
     if (holding_nc == ff_orig) {
       holding_nc <- "temp.nc"
