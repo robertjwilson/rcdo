@@ -40,8 +40,13 @@
 #' uk_sst <- nc_clip(ff, lon_range = c(-12, 10), lat_range = c(48, 62))
 nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90, 90), vert_range = NULL, date_range = NULL, months = NULL, years = NULL, out_file = NULL, cdo_output = FALSE, zip_file = FALSE, overwrite = FALSE) {
 
+  if(!is.null(out_file) & file.exists(out_file) & overwrite == FALSE)
+    return("out_file already exists and overwrite = FALSE. Functioning exiting")
+
+
   # log the original file and get the full system path
   ff_orig <- normalizePath(ff)
+
 
   # holding nc. This is used as the file name for any netcdf manipulations
   holding_nc <- ff_orig
