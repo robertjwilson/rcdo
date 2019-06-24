@@ -5,7 +5,7 @@
 # figure out how to handle very large files. Use gebco bath
 # add a check whether there are any vertical depths in the file
 
-#' @title remap a ncdf file
+#' @title Horizontally and vertically remap a ncdf file
 #' @description This function allows you to remap a netcdf horizontally and vertically to any set of latlon coordinates.
 #' @param ff This is the file to regrid.
 #' @param vars Select the variables you want to regrid. If this is not given, all variables will be regridded.

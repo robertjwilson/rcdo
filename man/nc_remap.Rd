@@ -2,7 +2,7 @@
 % Please edit documentation in R/remap.R
 \name{nc_remap}
 \alias{nc_remap}
-\title{remap a ncdf file}
+\title{Horizontally and vertically remap a ncdf file}
 \usage{
 nc_remap(ff, vars = NULL, coords = NULL, vert_depths = NULL,
   out_file = NULL, zip_file = FALSE, cdo_output = FALSE,
