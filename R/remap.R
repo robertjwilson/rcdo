@@ -108,7 +108,8 @@ nc_remap <- function(ff, vars = NULL, coords = NULL, vert_depths = NULL, out_fil
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
-    system(stringr::str_glue("cdo selname,{stringr::str_flatten(vars, ", ")} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    var_select <- stringr::str_flatten(vars, ",")
+    system(stringr::str_glue("cdo selname,{var_select} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
 
     if (holding_nc == ff_orig) {
       holding_nc <- "temp.nc"

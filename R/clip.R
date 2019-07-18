@@ -163,7 +163,8 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
 
   # Now, we need to select the variables we are interested in....
   if (!is.null(vars)) {
-    system(stringr::str_glue("cdo selname,{stringr::str_flatten(vars,",")} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
+    var_select <- stringr::str_flatten(vars, ",")
+    system(stringr::str_glue("cdo selname,{var_select} {holding_nc} dummy.nc"), ignore.stderr = (cdo_output == FALSE))
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect vars chosen. Set cdo_output = TRUE and inspect output.")
     }
