@@ -168,6 +168,9 @@ nc_clip <- function(ff, vars = NULL, lon_range = c(-180, 180), lat_range = c(-90
     if (!file.exists("dummy.nc")) {
       stop("error: cdo cannot subselect vars chosen. Set cdo_output = TRUE and inspect output.")
     }
+  if (holding_nc == ff_orig) {
+    holding_nc <- "temp.nc"
+  }
     file.rename("dummy.nc", holding_nc)
   }
 
