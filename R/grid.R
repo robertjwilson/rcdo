@@ -69,9 +69,9 @@ nc_grid <- function(ff, cdo_output = FALSE) {
     )))
   } else {
     if (length(depths) < 2 & length(times) < 2) {
-      nc_grid <- dplyr::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
+      nc_grid <- tibble::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
     } else {
-      nc_grid <- dplyr::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
+      nc_grid <- tibble::tibble(Longitude = as.numeric(nc_lon), Latitude = as.numeric(nc_lat))
 
     }
   }
